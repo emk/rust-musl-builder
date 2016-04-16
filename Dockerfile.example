@@ -1,0 +1,15 @@
+# -*- mode: dockerfile -*-
+#
+# An example Dockerfile showing how to add new static C libraries using
+# musl-gcc.
+
+FROM ekidd/rust-musl-builder:latest
+
+# Build a static copy of zlib.
+RUN VERS=1.2.8 && \
+    mkdir -p /home/rust/libs && cd /home/rust/libs && \
+    curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
+    tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
+    CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
+    make && sudo make install && \
+    rm -rf /home/rust/libs/zlib-$VERS.tar.gz /home/rust/libs/zlib-$VERS
