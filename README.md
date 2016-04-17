@@ -38,7 +38,7 @@ installed, you can create a Dockerfile based on this one, and use
 `musl-gcc` to compile the libraries you need.  For example:
 
 ```Dockerfile
-FROM ekidd/rust-musl-builder:latest
+FROM ekidd/rust-musl-builder:stable
 
 RUN VERS=1.2.8 && \
     mkdir -p /home/rust/libs && cd /home/rust/libs && \

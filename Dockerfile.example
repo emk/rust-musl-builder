@@ -3,7 +3,7 @@
 # An example Dockerfile showing how to add new static C libraries using
 # musl-gcc.
 
-FROM ekidd/rust-musl-builder:latest
+FROM ekidd/rust-musl-builder:stable
 
 # Build a static copy of zlib.
 RUN VERS=1.2.8 && \
