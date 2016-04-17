@@ -1,5 +1,7 @@
 # `rust-musl-builder`: Docker container for easily building static Rust binaries
 
+[![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
+
 Do you want to compile a completely static Rust binary with no external
 dependencies?  If so, try:
 
@@ -38,15 +40,15 @@ installed, you can create a Dockerfile based on this one, and use
 `musl-gcc` to compile the libraries you need.  For example:
 
 ```Dockerfile
-FROM ekidd/rust-musl-builder:stable
+FROM ekidd/rust-musl-builder
 
 RUN VERS=1.2.8 && \
-    mkdir -p /home/rust/libs && cd /home/rust/libs && \
+    cd /home/rust/libs && \
     curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
     CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
     make && sudo make install && \
-    rm -rf /home/rust/libs/zlib-$VERS.tar.gz /home/rust/libs/zlib-$VERS
+    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS
 ```
 
 This usually involves a bit of experimentation for each new library, but it
@@ -55,6 +57,11 @@ seems to work well for most simple, standalone libraries.
 If you need an especially common library, please feel free to submit a pull
 request adding it to the main `Dockerfile`!  We'd like to support popular
 Rust crates out of the box.
+
+## Development notes
+
+After modifying the image, run `./test-image` to make sure that everything
+works.
 
 [Alpine Linux container]: https://hub.docker.com/_/alpine/
 [musl-libc]: http://www.musl-libc.org/
