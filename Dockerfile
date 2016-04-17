@@ -46,7 +46,6 @@ RUN rm -rf /musl
 
 # Mount the source code we want to build on /home/rust/src.  We do this as
 # user `rust`, which will be uid 1000, gid 1000 outside the container.
-VOLUME ["/home/rust/src"]
 USER rust
 WORKDIR /home/rust/src
 
