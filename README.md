@@ -63,6 +63,11 @@ Rust crates out of the box.
 After modifying the image, run `./test-image` to make sure that everything
 works.
 
+## License
+
+Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
+[MIT license](./LICENSE-MIT.txt).
+
 [Alpine Linux container]: https://hub.docker.com/_/alpine/
 [musl-libc]: http://www.musl-libc.org/
 [musl-gcc]: http://www.musl-libc.org/how.html
