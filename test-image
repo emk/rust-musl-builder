@@ -13,11 +13,11 @@ docker build -t rust-musl-zlib -f Dockerfile.example .
 docker run --rm ekidd/rust-musl-builder bash -c "
 set -euo pipefail
 export USER=rust
-cargo new --vcs none --bin test
-cd test
+cargo new --vcs none --bin testme
+cd testme
 cargo build
 echo 'Checking to make sure it is not a dynamic executable'
-if ldd target/x86_64-unknown-linux-musl/debug/test; then
+if ldd target/x86_64-unknown-linux-musl/debug/testme; then
   echo 'Executable is not static!' 1>&2
   echo 'FAIL.' 1>&2
   exit 1
