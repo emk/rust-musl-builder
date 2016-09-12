@@ -63,6 +63,7 @@ RUN VERS=1.0.2g && \
     make && sudo make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS
 ENV OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
+    DEP_OPENSSL_INCLUDE=/usr/local/musl/include/ \
     OPENSSL_LIB_DIR=/usr/local/musl/lib/ \
     OPENSSL_STATIC=1
 
