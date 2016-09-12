@@ -2,6 +2,9 @@
 #
 # Usage: ./build-release <PROJECT> ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
 #
+# The latest version of this script is available at
+# https://github.com/emk/rust-musl-builder/blob/master/examples/build-release
+#
 # Called by `.travis.yml` to build release binaries.  We use
 # ekidd/rust-musl-builder to make the Linux binaries so that we can run
 # them unchanged on any distro, including tiny distros like Alpine (which

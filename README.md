@@ -58,15 +58,66 @@ If you need an especially common library, please feel free to submit a pull
 request adding it to the main `Dockerfile`!  We'd like to support popular
 Rust crates out of the box.
 
+## Making static releases with Travis CI and GitHub
+
+These instructions are inspired by [rust-cross][].
+
+First, read the [Travis CI: GitHub Releases Uploading][uploading] page, and
+run `travis setup releases` as instructed.  Then add the following lines to
+your existing `.travis.yml` file, replacing `myapp` with the name of your
+package:
+
+```yaml
+language: rust
+sudo: required
+os:
+- linux
+- osx
+rust:
+- stable
+services:
+- docker
+before_deploy: "./build-release myapp ${TRAVIS_TAG}-${TRAVIS_OS_NAME}"
+deploy:
+  provider: releases
+  api_key:
+    secure: "..."
+  file_glob: true
+  file: "myapp-${TRAVIS_TAG}-${TRAVIS_OS_NAME}.*"
+  skip_cleanup: true
+  on:
+    rust: stable
+    tags: true
+```
+
+Next, copy [`build-release`](./examples/build-release) into your project
+and run `chmod +x build-release`.
+
+When you push a new tag to your project, `build-release` will automatically
+build new Linux binaries using `rust-musl-builder`, and new Mac binaries
+with Cargo, and it will upload both to the GitHub releases page for your
+repository.
+
+For a working example, see [faradayio/conductor][conductor].
+
+[rust-cross]: https://github.com/japaric/rust-cross
+[uploading]: https://docs.travis-ci.com/user/deployment/releases
+[conductor]: https://github.com/faradayio/conductor
+
 ## Development notes
 
 After modifying the image, run `./test-image` to make sure that everything
 works.
 
-After making changes, they must be pushed to the `stable` branch to build
-the official `stable` and `latest` images on Docker Hub.  Tagged versions
-of Rust (such as `1.11`) must be given their own branches and manually
-configured on Docker Hub.
+MAINTAINERS ONLY: After making changes, they must be pushed to the `stable`
+branch to build the official `stable` and `latest` images on Docker Hub.
+Tagged versions of Rust (such as `1.11`) must be given their own branches
+and manually configured on Docker Hub.
+
+```sh
+git push origin master:stable
+git push origin master:rust-$(rustc --version | awk '{ print $2 }')
+```
 
 ## License
 
