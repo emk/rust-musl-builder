@@ -63,6 +63,11 @@ Rust crates out of the box.
 After modifying the image, run `./test-image` to make sure that everything
 works.
 
+After making changes, they must be pushed to the `stable` branch to build
+the official `stable` and `latest` images on Docker Hub.  Tagged versions
+of Rust (such as `1.11`) must be given their own branches and manually
+configured on Docker Hub.
+
 ## License
 
 Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
