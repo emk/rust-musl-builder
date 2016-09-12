@@ -1,5 +1,6 @@
-# Use Debian 8.0 "Jessie" as the base for our Rust musl toolchain.
-FROM debian:jessie
+# Use Debian 16.04 as the base for our Rust musl toolchain, because of
+# https://github.com/rust-lang/rust/issues/34978 (as of Rust 1.11).
+FROM ubuntu:16.04
 
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
