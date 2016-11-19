@@ -16,6 +16,7 @@ RUN apt-get update && \
         curl \
         file \
         git \
+        musl-tools \
         sudo \
         xutils-dev \
         && \
@@ -47,12 +48,6 @@ ADD cargo-config.toml /home/rust/.cargo/config
 # We'll build our libraries in subdirectories of /home/rust/libs.  Please
 # clean up when you're done.
 WORKDIR /home/rust/libs
-
-# Build the musl-libc toolchain, which installs itself in /usr/local/musl.
-RUN sudo chown rust:rust /home/rust/libs && \
-    git clone git://git.musl-libc.org/musl && cd musl && \
-    ./configure && make && sudo make install && \
-    cd .. && rm -rf musl
 
 # Build a static library version of OpenSSL using musl-libc.  This is
 # needed by the popular Rust `hyper` crate.
