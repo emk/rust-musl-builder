@@ -51,7 +51,7 @@ WORKDIR /home/rust/libs
 
 # Build a static library version of OpenSSL using musl-libc.  This is
 # needed by the popular Rust `hyper` crate.
-RUN VERS=1.0.2g && \
+RUN VERS=1.0.2j && \
     curl -O https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xvzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
     env CC=musl-gcc ./config --prefix=/usr/local/musl && \
