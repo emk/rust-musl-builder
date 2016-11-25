@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Abort if anything goes wrong.
 set -euo pipefail
