@@ -43,7 +43,7 @@ ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/bin:/usr/bin:/bin
 # interact with the user or fool around with TTYs.  We also set the default
 # `--target` to musl so that our users don't need to keep overriding it
 # manually.
-RUN curl https://sh.rustup.rs -sSf |
+RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y \
              --default-toolchain $TOOLCHAIN \
              --default-target x86_64-unknown-linux-musl
