@@ -2,6 +2,9 @@
 # https://github.com/rust-lang/rust/issues/34978 (as of Rust 1.11).
 FROM ubuntu:16.04
 
+# The Rust toolchain to use when building our image.  Set by `hooks/build`.
+ARG TOOLCHAIN=stable
+
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
 # large selection of the most popular crates.
@@ -40,9 +43,10 @@ ENV PATH=/home/rust/.cargo/bin:/usr/local/musl/bin:/usr/local/bin:/usr/bin:/bin
 # interact with the user or fool around with TTYs.  We also set the default
 # `--target` to musl so that our users don't need to keep overriding it
 # manually.
-RUN curl https://sh.rustup.rs -sSf | sh -s -- -y && \
-    rustup default stable && \
-    rustup target add x86_64-unknown-linux-musl
+RUN curl https://sh.rustup.rs -sSf |
+    sh -s -- -y \
+             --default-toolchain $TOOLCHAIN \
+             --default-target x86_64-unknown-linux-musl
 ADD cargo-config.toml /home/rust/.cargo/config
 
 # We'll build our libraries in subdirectories of /home/rust/libs.  Please

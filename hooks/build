@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# Abort if anything goes wrong.
+set -euo pipefail
+
+# Always map the Docker tag `latest` to stable Rust.
+if [ "$DOCKER_TAG" == "latest" ]; then
+  TOOLCHAIN=stable
+else
+  TOOLCHAIN="$DOCKER_TAG"
+fi
+
+# Run the build.
+docker build --build-arg TOOLCHAIN="$TOOLCHAIN" -t "$IMAGE_NAME" .
