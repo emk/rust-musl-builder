@@ -1,12 +1,16 @@
+# NOTE:
+Fork of https://github.com/emk/rust-musl-builder to have control of updates
+
+
 # `rust-musl-builder`: Docker container for easily building static Rust binaries
 
-[![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
+[![Docker Image](https://img.shields.io/docker/pulls/xliiv/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/xliiv/rust-musl-builder/)
 
 Do you want to compile a completely static Rust binary with no external
 dependencies?  If so, try:
 
 ```sh
-alias rust-musl-builder='docker run --rm -it -v "$(pwd)":/home/rust/src ekidd/rust-musl-builder'
+alias rust-musl-builder='docker run --rm -it -v "$(pwd)":/home/rust/src xliiv/rust-musl-builder'
 rust-musl-builder cargo build --release
 ```
 
@@ -40,7 +44,7 @@ installed, you can create a Dockerfile based on this one, and use
 `musl-gcc` to compile the libraries you need.  For example:
 
 ```Dockerfile
-FROM ekidd/rust-musl-builder
+FROM xliiv/rust-musl-builder
 
 RUN VERS=1.2.8 && \
     cd /home/rust/libs && \

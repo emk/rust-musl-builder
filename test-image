@@ -4,13 +4,13 @@
 set -euo pipefail
 
 # Make sure we can build our main container.
-docker build -t ekidd/rust-musl-builder .
+docker build -t xliiv/rust-musl-builder .
 
 # Make sure we can build our example derived container.
 docker build -t rust-musl-zlib -f Dockerfile.example .
 
 # Make sure we can build a static executable.
-docker run --rm ekidd/rust-musl-builder bash -c "
+docker run --rm xliiv/rust-musl-builder bash -c "
 set -euo pipefail
 export USER=rust
 cargo new --vcs none --bin testme
