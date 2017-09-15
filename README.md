@@ -33,7 +33,10 @@ libraries:
 - The standard `musl-libc` libraries.
 - OpenSSL, which is needed by many Rust applications.
 
-statically linked OpenSSL to the binary and if you need some for of CA certificate store to validate certificates(may be a https request), you need to add some code in your application, for [detail](https://github.com/emk/rust-musl-builder/issues/21).
+## Making OpenSSL work
+
+If your application uses OpenSSL, you will also need to take a few extra steps to make sure that it can find OpenSSL's list of trusted certificates, which is stored in different locations on different Linux distributions. You can do this using [`openssl-probe`](https://crates.io/crates/openssl-probe) as follows:
+
 ```rust
 extern crate openssl_probe;
 
