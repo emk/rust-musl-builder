@@ -33,6 +33,19 @@ libraries:
 - The standard `musl-libc` libraries.
 - OpenSSL, which is needed by many Rust applications.
 
+## Making OpenSSL work
+
+If your application uses OpenSSL, you will also need to take a few extra steps to make sure that it can find OpenSSL's list of trusted certificates, which is stored in different locations on different Linux distributions. You can do this using [`openssl-probe`](https://crates.io/crates/openssl-probe) as follows:
+
+```rust
+extern crate openssl_probe;
+
+fn main() {
+    openssl_probe::init_ssl_cert_env_vars();
+    //... your code
+}
+```
+
 ## Adding more C libraries
 
 If you're using Docker crates which require specific C libraries to be
