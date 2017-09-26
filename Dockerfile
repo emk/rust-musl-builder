@@ -19,6 +19,7 @@ RUN apt-get update && \
         curl \
         file \
         git \
+        libpq-dev \
         musl-tools \
         sudo \
         xutils-dev \
