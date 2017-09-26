@@ -32,6 +32,10 @@ libraries:
 
 - The standard `musl-libc` libraries.
 - OpenSSL, which is needed by many Rust applications.
+- `libpq`, which is needed for applications that use `diesel` with PostgreSQL.
+- `libz`, which is needed by `libpq`.
+
+This library also sets up the environment variables needed to compile popular Rust crates using these libraries.
 
 ## Making OpenSSL work
 
@@ -55,7 +59,8 @@ installed, you can create a Dockerfile based on this one, and use
 ```Dockerfile
 FROM ekidd/rust-musl-builder
 
-RUN VERS=1.2.8 && \
+# EXAMPLE ONLY! libz is already included.
+RUN VERS=1.2.11 && \
     cd /home/rust/libs && \
     curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
     tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
@@ -111,26 +116,16 @@ build new Linux binaries using `rust-musl-builder`, and new Mac binaries
 with Cargo, and it will upload both to the GitHub releases page for your
 repository.
 
-For a working example, see [faradayio/conductor][conductor].
+For a working example, see [faradayio/cage][cage].
 
 [rust-cross]: https://github.com/japaric/rust-cross
 [uploading]: https://docs.travis-ci.com/user/deployment/releases
-[conductor]: https://github.com/faradayio/conductor
+[cage]: https://github.com/faradayio/cage
 
 ## Development notes
 
 After modifying the image, run `./test-image` to make sure that everything
 works.
-
-MAINTAINERS ONLY: After making changes, they must be pushed to the `stable`
-branch to build the official `stable` and `latest` images on Docker Hub.
-Tagged versions of Rust (such as `1.11`) must be given their own branches
-and manually configured on Docker Hub.
-
-```sh
-git push origin master:stable
-git push origin master:rust-$(rustc --version | awk '{ print $2 }')
-```
 
 ## License
 

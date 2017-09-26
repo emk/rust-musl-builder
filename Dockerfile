@@ -54,18 +54,39 @@ WORKDIR /home/rust/libs
 
 # Build a static library version of OpenSSL using musl-libc.  This is
 # needed by the popular Rust `hyper` crate.
-RUN VERS=1.0.2l && \
+RUN echo "Building OpenSSL" && \
+    VERS=1.0.2l && \
     curl -O https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xvzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
     env CC=musl-gcc ./config --prefix=/usr/local/musl && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     make && sudo make install && \
-    cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS
+    cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS && \
+    echo "Building zlib" && \
+    VERS=1.2.11 && \
+    cd /home/rust/libs && \
+    curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
+    tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
+    CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
+    make && sudo make install && \
+    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS && \
+    echo "Building libpq" && \
+    VERS=9.6.5 && \
+    curl -o postgres.tar.gz https://ftp.postgresql.org/pub/source/v$VERS/postgresql-$VERS.tar.gz && \
+    tar xzf postgres.tar.gz && \
+    cd postgresql-$VERS && \
+    CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
+    cd src/interfaces/libpq && \
+    make all-static-lib && sudo make install-lib-static && \
+    cd ../../../.. && rm -rf postgres.tar.gz postgresql-$VERS
+
 ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
     DEP_OPENSSL_INCLUDE=/usr/local/musl/include/ \
     OPENSSL_LIB_DIR=/usr/local/musl/lib/ \
-    OPENSSL_STATIC=1
+    OPENSSL_STATIC=1 \
+    PQ_LIB_DIR=/usr/local/musl/lib \
+    PQ_LIB_STATIC=1
 
 # (Please feel free to submit pull requests for musl-libc builds of other C
 # libraries needed by the most popular and common Rust crates, to avoid
