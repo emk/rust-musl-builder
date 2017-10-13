@@ -1,0 +1,24 @@
+# -*- mode: dockerfile -*-
+#
+# An example Dockerfile showing how to build a Rust executable using this
+# image, and deploy it with a tiny Alpine Linux container.
+
+# Our first FROM statement declares the build environment.
+FROM ekidd/rust-musl-builder AS builder
+
+# You would normally add your source code to /home/rust/src like this.
+# ADD . ./
+
+# ...but we're going to just create a new app instead for demo purposes.
+RUN cd .. && rm -r src && USER=rust cargo new --vcs none --bin --name hello src
+
+# Build our application.
+RUN cargo build --release
+
+# Now, we need to build our _real_ Docker container, copying in `hello`.
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=builder \
+    /home/rust/src/target/x86_64-unknown-linux-musl/release/hello \
+    /usr/local/bin/
+CMD /usr/local/bin/hello

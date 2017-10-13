@@ -18,11 +18,7 @@ making final release builds.
 
 ## Deploying your Rust application
 
-With a bit of luck, you should be able to just copy your application binary
-from `target/x86_64-unknown-linux-musl/release`, and install it directly on
-any reasonably modern x86_64 Linux machine.  In particular, you should be
-able to copy your Rust application into an
-[Alpine Linux container][].
+With a bit of luck, you should be able to just copy your application binary from `target/x86_64-unknown-linux-musl/release`, and install it directly on any reasonably modern x86_64 Linux machine.  In particular, you should be able make static release binaries using TravisCI and GitHub, or you can copy your Rust application into an [Alpine Linux container][]. See below for details!
 
 ## How it works
 
@@ -49,32 +45,6 @@ fn main() {
     //... your code
 }
 ```
-
-## Adding more C libraries
-
-If you're using Docker crates which require specific C libraries to be
-installed, you can create a Dockerfile based on this one, and use
-`musl-gcc` to compile the libraries you need.  For example:
-
-```Dockerfile
-FROM ekidd/rust-musl-builder
-
-# EXAMPLE ONLY! libz is already included.
-RUN VERS=1.2.11 && \
-    cd /home/rust/libs && \
-    curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
-    tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
-    CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
-    make && sudo make install && \
-    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS
-```
-
-This usually involves a bit of experimentation for each new library, but it
-seems to work well for most simple, standalone libraries.
-
-If you need an especially common library, please feel free to submit a pull
-request adding it to the main `Dockerfile`!  We'd like to support popular
-Rust crates out of the box.
 
 ## Making static releases with Travis CI and GitHub
 
@@ -121,6 +91,42 @@ For a working example, see [faradayio/cage][cage].
 [rust-cross]: https://github.com/japaric/rust-cross
 [uploading]: https://docs.travis-ci.com/user/deployment/releases
 [cage]: https://github.com/faradayio/cage
+
+## Making tiny Docker images with Alpine Linux and Rust binaries
+
+Docker now supports [multistage builds][multistage], which make it easy to
+build your Rust application with `rust-musl-builder` and deploy it using
+[Alpine Linux][]. For a working example, see
+[`Dockerfile.multistage-example`](./Dockerfile.multistage-example).
+
+[multistage]: https://docs.docker.com/engine/userguide/eng-image/multistage-build/
+[Alpine Linux]: https://alpinelinux.org/
+
+## Adding more C libraries
+
+If you're using Docker crates which require specific C libraries to be
+installed, you can create a `Dockerfile` based on this one, and use
+`musl-gcc` to compile the libraries you need.  For example:
+
+```Dockerfile
+FROM ekidd/rust-musl-builder
+
+# EXAMPLE ONLY! libz is already included.
+RUN VERS=1.2.11 && \
+    cd /home/rust/libs && \
+    curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
+    tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
+    CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
+    make && sudo make install && \
+    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS
+```
+
+This usually involves a bit of experimentation for each new library, but it
+seems to work well for most simple, standalone libraries.
+
+If you need an especially common library, please feel free to submit a pull
+request adding it to the main `Dockerfile`!  We'd like to support popular
+Rust crates out of the box.
 
 ## Development notes
 
