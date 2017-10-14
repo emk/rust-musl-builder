@@ -8,6 +8,7 @@ FROM ekidd/rust-musl-builder AS builder
 
 # You would normally add your source code to /home/rust/src like this.
 # ADD . ./
+# RUN sudo chmod -R .
 
 # ...but we're going to just create a new app instead for demo purposes.
 RUN cd .. && rm -r src && USER=rust cargo new --vcs none --bin --name hello src
