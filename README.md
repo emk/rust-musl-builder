@@ -133,6 +133,11 @@ Rust crates out of the box.
 After modifying the image, run `./test-image` to make sure that everything
 works.
 
+## Other ways to build portable Rust binaries
+
+- [messense/rust-musl-cross](https://github.com/messense/rust-musl-cross) shows how to build binaries for many different architectures.
+- [japaric/rust-cross](https://github.com/japaric/rust-cross) has extensive instructions on how to cross-compile Rust applications.
+
 ## License
 
 Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
