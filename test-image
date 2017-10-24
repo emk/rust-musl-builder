@@ -7,11 +7,11 @@ set -euo pipefail
 docker build -t ekidd/rust-musl-builder .
 
 # Make sure we can build our example derived container.
-docker build -t rust-musl-zlib -f Dockerfile.example .
+docker build -t rust-musl-zlib examples/adding-a-library
 
 # Make sure we can build a multi-stage container.
-docker build -t rust-multistage-example -f Dockerfile.multistage-example .
-docker run --rm rust-multistage-example
+docker build -t rust-musl-builder-using-diesel examples/using-diesel
+docker run --rm rust-musl-builder-using-diesel
 
 # Make sure we can build a static executable.
 docker run --rm ekidd/rust-musl-builder bash -c "

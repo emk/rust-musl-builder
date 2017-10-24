@@ -19,7 +19,11 @@ RUN apt-get update && \
         curl \
         file \
         git \
+        musl-dev \
         musl-tools \
+        libpq-dev \
+        libssl-dev \
+        pkgconf \
         sudo \
         xutils-dev \
         && \
@@ -58,7 +62,7 @@ RUN echo "Building OpenSSL" && \
     VERS=1.0.2l && \
     curl -O https://www.openssl.org/source/openssl-$VERS.tar.gz && \
     tar xvzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
-    env CC=musl-gcc ./config --prefix=/usr/local/musl && \
+    env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     make && sudo make install && \
     cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS && \
@@ -76,17 +80,19 @@ RUN echo "Building OpenSSL" && \
     tar xzf postgres.tar.gz && \
     cd postgresql-$VERS && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
-    cd src/interfaces/libpq && \
-    make all-static-lib && sudo make install-lib-static && \
-    cd ../../../.. && rm -rf postgres.tar.gz postgresql-$VERS
+    cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && cd ../../.. && \
+    cd src/bin/pg_config && make && sudo make install && cd ../.. && \
+    cd .. && rm -rf postgres.tar.gz postgresql-$VERS
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
     DEP_OPENSSL_INCLUDE=/usr/local/musl/include/ \
     OPENSSL_LIB_DIR=/usr/local/musl/lib/ \
     OPENSSL_STATIC=1 \
-    PQ_LIB_DIR=/usr/local/musl/lib \
-    PQ_LIB_STATIC=1
+    PQ_LIB_STATIC_X86_64_UNKNOWN_LINUX_MUSL=1 \
+    PG_CONFIG_X86_64_UNKNOWN_LINUX_GNU=/usr/bin/pg_config \
+    PKG_CONFIG_ALLOW_CROSS=true \
+    PKG_CONFIG_ALL_STATIC=true
 
 # (Please feel free to submit pull requests for musl-libc builds of other C
 # libraries needed by the most popular and common Rust crates, to avoid
