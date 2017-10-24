@@ -114,9 +114,12 @@ After modifying the image, run `./test-image` to make sure that everything works
 
 ## Other ways to build portable Rust binaries
 
+If for some reason this image doesn't meet your needs, there's a variety of other people working on similar projects:
+
 - [messense/rust-musl-cross](https://github.com/messense/rust-musl-cross) shows how to build binaries for many different architectures.
 - [japaric/rust-cross](https://github.com/japaric/rust-cross) has extensive instructions on how to cross-compile Rust applications.
 - [clux/muslrust](https://github.com/clux/muslrust) also supports libcurl.
+- [golddranks/rust_musl_docker](https://github.com/golddranks/rust_musl_docker). Another Docker image.
 
 ## License
 
