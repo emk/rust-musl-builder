@@ -87,6 +87,19 @@ deploy:
 
 Next, copy [`build-release`](./examples/build-release) into your project and run `chmod +x build-release`.
 
+Finally, add a `Dockerfile` to perform the actual build:
+
+```rust
+FROM ekidd/rust-musl-builder
+
+# We need to add the source code to the image because `rust-musl-builder`
+# assumes a UID of 1000, but TravisCI has switched to 2000.
+ADD . ./
+RUN sudo chown -R rust:rust .
+
+CMD cargo build --release
+```
+
 When you push a new tag to your project, `build-release` will automatically build new Linux binaries using `rust-musl-builder`, and new Mac binaries with Cargo, and it will upload both to the GitHub releases page for your repository.
 
 For a working example, see [faradayio/cage][cage].
