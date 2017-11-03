@@ -22,6 +22,7 @@ RUN apt-get update && \
         musl-dev \
         musl-tools \
         libpq-dev \
+        libsqlite3-dev \
         libssl-dev \
         pkgconf \
         sudo \
@@ -82,7 +83,15 @@ RUN echo "Building OpenSSL" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
     cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && cd ../../.. && \
     cd src/bin/pg_config && make && sudo make install && cd ../.. && \
-    cd .. && rm -rf postgres.tar.gz postgresql-$VERS
+    cd .. && rm -rf postgres.tar.gz postgresql-$VERS && \
+    echo "Building sqlite" && \
+    VERS=3210000 && \
+    curl -O https://sqlite.org/2017/sqlite-autoconf-$VERS.tar.gz && \
+    tar xzf sqlite-autoconf-$VERS.tar.gz && cd sqlite-autoconf-$VERS && \
+    CC=musl-gcc CFLAGS=-fPIC ./configure --prefix=/usr/local/musl --enable-static --disable-shared --enable-fts5 && \
+    make && sudo make install && \
+    cd .. && rm -rf sqlite-autoconf-$VERS.tar.gz sqlite-autoconf-$VERS
+
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
@@ -91,6 +100,8 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_STATIC=1 \
     PQ_LIB_STATIC_X86_64_UNKNOWN_LINUX_MUSL=1 \
     PG_CONFIG_X86_64_UNKNOWN_LINUX_GNU=/usr/bin/pg_config \
+    SQLITE3_INCLUDE_DIR=/usr/local/musl/include/ \
+    SQLITE3_LIB_DIR=/usr/local/musl/lib/ \
     PKG_CONFIG_ALLOW_CROSS=true \
     PKG_CONFIG_ALL_STATIC=true
 

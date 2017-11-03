@@ -4,9 +4,11 @@ extern crate diesel;
 extern crate diesel_codegen;
 extern crate openssl_sys;
 
+use std::env;
+
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
-use std::env;
+use diesel::sqlite::SqliteConnection;
 
 table! {
     users (id) {
@@ -40,4 +42,7 @@ fn main() {
     } else {
         println!("No DATABASE_URL set, so doing nothing")
     }
+
+    // Test that we can establish a SQLite connection.
+    SqliteConnection::establish(":memory:").expect("could not connect to in-memory database");
 }

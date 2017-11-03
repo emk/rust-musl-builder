@@ -4,8 +4,8 @@ version = "0.1.0"
 authors = ["Eric Kidd <git@randomhacks.net>"]
 
 [dependencies]
-diesel = { version = "0.16", features = ["postgres"] }
-diesel_codegen = { version = "0.16", features = ["postgres"] }
+diesel = { version = "0.16", features = ["postgres", "sqlite"] }
+diesel_codegen = { version = "0.16", features = ["postgres", "sqlite"] }
 openssl-sys = "*"
 
 [patch.crates-io]
