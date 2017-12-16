@@ -22,6 +22,7 @@ RUN apt-get update && \
         musl-dev \
         musl-tools \
         libpq-dev \
+        libsqlite-dev \
         libssl-dev \
         pkgconf \
         sudo \

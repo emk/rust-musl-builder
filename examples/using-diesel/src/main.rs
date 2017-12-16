@@ -1,11 +1,12 @@
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate diesel_codegen;
 extern crate openssl_sys;
 
+use diesel::connection::Connection;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
+use diesel::sqlite::SqliteConnection;
+use diesel::types::{HasSqlType, Integer, Text};
 use std::env;
 
 table! {
@@ -22,20 +23,41 @@ struct User {
     name: String,
 }
 
+/// Run a query against our `users` table.
+fn query_users<C>(conn: &C)
+where
+    // OK, we made the mistake of trying to write generic `diesel` code that
+    // works for multiple types of databases. This requires some pretty
+    // hairy declarations.
+    C: Connection,
+    User: Queryable<(Integer, Text), C::Backend>,
+    C::Backend: HasSqlType<Integer> + HasSqlType<Text>,
+{
+    let rows = users::table
+        .limit(5)
+        .load::<User>(conn)
+        .expect("could not load users");
+    for row in rows {
+        println!("{:?}", row);
+    }
+}
+
 fn main() {
     println!("Hello, world!");
 
     // Only run our database example if we have a database. Otherwise, we just
     // want to make sure everything links correctly.
     if let Ok(url) = env::var("DATABASE_URL") {
-        let conn = PgConnection::establish(&url)
-            .expect("could not connect to site");
-        let rows = users::table
-            .limit(5)
-            .load::<User>(&conn)
-            .expect("could not load users");
-        for row in rows {
-            println!("{:?}", row);
+        if url.starts_with("postgres:") {
+            let conn = PgConnection::establish(&url)
+                .expect("could not connect to database");
+            query_users(&conn);
+        } else if url.starts_with("sqlite:") {
+            let conn = SqliteConnection::establish(&url)
+                .expect("could not connect to database");
+            query_users(&conn);
+        } else {
+            println!("Unsupported database URL: {}", url);
         }
     } else {
         println!("No DATABASE_URL set, so doing nothing")

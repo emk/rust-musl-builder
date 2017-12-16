@@ -24,6 +24,11 @@ With a bit of luck, you should be able to just copy your application binary from
 - `libpq`, which is needed for applications that use `diesel` with PostgreSQL. Note that this may be broken under Rust 1.21.0 and later (see https://github.com/emk/rust-musl-builder/issues/27).
 - `libz`, which is needed by `libpq`.
 
+You can also use the following libraries with a bit of setup:
+
+- SQLite3 with
+  `diesel`. See [examples/using-diesel](./examples/using-diesel/).
+
 This library also sets up the environment variables needed to compile popular Rust crates using these libraries.
 
 ## Making OpenSSL work

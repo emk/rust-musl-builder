@@ -4,9 +4,12 @@ version = "0.1.0"
 authors = ["Eric Kidd <git@randomhacks.net>"]
 
 [dependencies]
-diesel = { version = "0.16", features = ["postgres"] }
-diesel_codegen = { version = "0.16", features = ["postgres"] }
+diesel = { version = "1.0.0-beta1", features = ["postgres", "sqlite"] }
+# Needed for sqlite.
+libsqlite3-sys = { version = "*", features = ["bundled"] }
+# Needed for Postgres.
 openssl-sys = "*"
 
 [patch.crates-io]
+# Needed for Postgres. Patches the build script to support cross-compilation.
 pq-sys = { git = 'https://github.com/golddranks/pq-sys' }
