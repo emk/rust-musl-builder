@@ -1,6 +1,4 @@
-# Use Debian 16.04 as the base for our Rust musl toolchain, because of
-# https://github.com/rust-lang/rust/issues/34978 (as of Rust 1.11).
-FROM ubuntu:16.04
+FROM debian:jessie
 
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=stable
