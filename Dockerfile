@@ -53,37 +53,35 @@ RUN curl https://sh.rustup.rs -sSf | \
     rustup target add x86_64-unknown-linux-musl
 ADD cargo-config.toml /home/rust/.cargo/config
 
-# We'll build our libraries in subdirectories of /home/rust/libs.  Please
-# clean up when you're done.
-WORKDIR /home/rust/libs
-
 # Build a static library version of OpenSSL using musl-libc.  This is
 # needed by the popular Rust `hyper` crate.
 RUN echo "Building OpenSSL" && \
-    VERS=1.0.2l && \
-    curl -O https://www.openssl.org/source/openssl-$VERS.tar.gz && \
-    tar xvzf openssl-$VERS.tar.gz && cd openssl-$VERS && \
+    cd /tmp && \
+    OPENSSL_VERSION=1.0.2l && \
+    curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
+    tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     make && sudo make install && \
-    cd .. && rm -rf openssl-$VERS.tar.gz openssl-$VERS && \
+    \
     echo "Building zlib" && \
-    VERS=1.2.11 && \
-    cd /home/rust/libs && \
-    curl -LO http://zlib.net/zlib-$VERS.tar.gz && \
-    tar xzf zlib-$VERS.tar.gz && cd zlib-$VERS && \
+    cd /tmp && \
+    ZLIB_VERSION=1.2.11 && \
+    curl -LO "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
+    tar xzf "zlib-$ZLIB_VERSION.tar.gz" && cd "zlib-$ZLIB_VERSION" && \
     CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
     make && sudo make install && \
-    cd .. && rm -rf zlib-$VERS.tar.gz zlib-$VERS && \
+    \
     echo "Building libpq" && \
-    VERS=9.6.5 && \
-    curl -o postgres.tar.gz https://ftp.postgresql.org/pub/source/v$VERS/postgresql-$VERS.tar.gz && \
-    tar xzf postgres.tar.gz && \
-    cd postgresql-$VERS && \
+    cd /tmp && \
+    POSTGRESQL_VERSION=9.6.5 && \
+    curl -LO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
+    tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
-    cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && cd ../../.. && \
-    cd src/bin/pg_config && make && sudo make install && cd ../.. && \
-    cd .. && rm -rf postgres.tar.gz postgresql-$VERS
+    cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && \
+    cd ../../bin/pg_config && make && sudo make install && \
+    \
+    rm -r /tmp/*
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
     OPENSSL_INCLUDE_DIR=/usr/local/musl/include/ \
