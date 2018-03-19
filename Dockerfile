@@ -96,7 +96,9 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
     PQ_LIB_STATIC_X86_64_UNKNOWN_LINUX_MUSL=1 \
     PG_CONFIG_X86_64_UNKNOWN_LINUX_GNU=/usr/bin/pg_config \
     PKG_CONFIG_ALLOW_CROSS=true \
-    PKG_CONFIG_ALL_STATIC=true
+    PKG_CONFIG_ALL_STATIC=true \
+    LIBZ_SYS_STATIC=1 \
+    TARGET=musl
 
 # (Please feel free to submit pull requests for musl-libc builds of other C
 # libraries needed by the most popular and common Rust crates, to avoid
