@@ -1,0 +1,16 @@
+language: rust
+
+services:
+  - docker
+
+os:
+  - linux
+
+script:
+- chmod -R 777 test-project
+- bash ./test-image
+
+notifications:
+  email:
+    on_success: never
+    on_failure: always
