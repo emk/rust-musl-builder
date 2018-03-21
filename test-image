@@ -1,10 +1,11 @@
 #!/bin/bash
+set -euo pipefail
 
 # Make bash fail much more aggressively on errors.
 set -euo pipefail
 
 # Make sure we can build our main container.
-docker build -t ekidd/rust-musl-builder .
+docker build --pull --no-cache -t ekidd/rust-musl-builder .
 
 # Make sure we can build our example derived container.
 docker build -t rust-musl-zlib examples/adding-a-library
@@ -14,19 +15,20 @@ docker build -t rust-musl-builder-using-diesel examples/using-diesel
 docker run --rm rust-musl-builder-using-diesel
 
 # Make sure we can build a static executable.
-docker run --rm ekidd/rust-musl-builder bash -c "
-set -euo pipefail
-export USER=rust
-cargo new --vcs none --bin testme
-cd testme
-cargo build
+rm -rf test-project/target/
+docker run -v "$(pwd)"/test-project:/home/rust/src --rm ekidd/rust-musl-builder cargo build --release
+
+TEST_BINARY="test-project/target/x86_64-unknown-linux-musl/release/test-project"
 echo 'Checking to make sure it is not a dynamic executable'
-if ldd target/x86_64-unknown-linux-musl/debug/testme; then
+file $TEST_BINARY || {
+  echo 'test-file not where it should be.' 1>&2
+  exit 1
+}
+if ldd $TEST_BINARY; then
   echo 'Executable is not static!' 1>&2
   echo 'FAIL.' 1>&2
   exit 1
 fi
-"
 
 # We're good.
 echo 'OK. Tests passed.' 1>&2
