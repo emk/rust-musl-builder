@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail
 
 # Make bash fail much more aggressively on errors.
 set -euo pipefail
