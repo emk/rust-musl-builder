@@ -1,0 +1,7 @@
+[package]
+name = "test-project"
+version = "0.1.0"
+authors = ["Patrick Haun <bomgar85@googlemail.com>"]
+
+[dependencies]
+git2 = "0.6"
