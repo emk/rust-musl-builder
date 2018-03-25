@@ -27,6 +27,7 @@ RUN apt-get update && \
         pkgconf \
         sudo \
         xutils-dev \
+        gcc-4.7-multilib-arm-linux-gnueabihf \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo
