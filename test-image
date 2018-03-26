@@ -19,7 +19,26 @@ set -euo pipefail
 export USER=rust
 cargo new --vcs none --bin testme
 cd testme
+# depending on git2 (and using it) makes the test much better, because git2 links against openssl and libz-sys among others
+sed -i 's/\[dependencies\]/\[dependencies\]\ngit2 = \"0.6\"/' Cargo.toml
+echo '
+extern crate git2;
+use git2::Repository;
+fn main() {
+let _local = Repository::init(\"fkbr\");
+println!(\"Hello, world!\");
+}' > src/main.rs
 cargo build
+
+# ldd will not die if the file does not exist, we need to check that too
+if [ ! -f target/x86_64-unknown-linux-musl/debug/testme ]; then
+  echo 'binary was not created by cargo build or has unexpected name. Heres whats in target:' 1>&2
+  # no tree in image, but this also works
+  set -x
+  ls -l target && ls -l target/x86_64-unknown-linux-musl && ls -l target/x86_64-unknown-linux-musl/debug
+  exit 1
+fi
+
 echo 'Checking to make sure it is not a dynamic executable'
 if ldd target/x86_64-unknown-linux-musl/debug/testme; then
   echo 'Executable is not static!' 1>&2
