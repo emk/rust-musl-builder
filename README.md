@@ -11,7 +11,7 @@ rust-musl-builder cargo build --release
 
 To target ARM hard float (Raspberry Pi):
 ```sh
-rust-musl-builder cargo build --target=armv7-unknown-linux-gnueabihf --release
+rust-musl-builder cargo build --target=armv7-unknown-linux-musleabihf --release 
 ```
 
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000.  It will output binaries in `target/x86_64-unknown-linux-musl/release`.  At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
