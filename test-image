@@ -19,14 +19,29 @@ set -euo pipefail
 export USER=rust
 cargo new --vcs none --bin testme
 cd testme
+
+# Add test cases here
+
+echo -e '\nRunning tests...\n'
+
+echo -e '--- Test case for x86_64:'
 cargo build
-echo 'Checking to make sure it is not a dynamic executable'
+echo 'ldd says:'
 if ldd target/x86_64-unknown-linux-musl/debug/testme; then
-  echo 'Executable is not static!' 1>&2
-  echo 'FAIL.' 1>&2
+  echo '[FAIL] Executable is not static!' 1>&2
   exit 1
 fi
+echo -e '[PASS] x86_64 binary is statically linked.\n'
+
+echo -e '--- Test case for ARMhf:'
+cargo build --target=armv7-unknown-linux-musleabihf
+echo 'ldd says:'
+if ldd target/armv7-unknown-linux-musleabihf/debug/testme; then
+  echo '[FAIL] Executable is not static!' 1>&2
+  exit 1
+fi
+echo -e '[PASS] ARMhf binary is statically linked.\n'
 "
 
 # We're good.
-echo 'OK. Tests passed.' 1>&2
+echo 'OK. ALL TESTS PASSED.' 1>&2
