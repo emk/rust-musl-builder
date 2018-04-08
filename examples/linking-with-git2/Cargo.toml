@@ -1,0 +1,7 @@
+[package]
+name = "linking-with-git2"
+version = "0.1.0"
+authors = ["Eric Kidd <git@randomhacks.net>"]
+
+[dependencies]
+git2 = "0.6"
