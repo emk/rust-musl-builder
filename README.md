@@ -33,10 +33,16 @@ With a bit of luck, you should be able to just copy your application binary from
 
 You can also use the following libraries with a bit of setup:
 
-- SQLite3 with
-  `diesel`. See [examples/using-diesel](./examples/using-diesel/).
+- SQLite3 with `diesel`. See [examples/using-diesel](./examples/using-diesel/).
 
 This library also sets up the environment variables needed to compile popular Rust crates using these libraries.
+
+## Extras
+
+This image also supports the following extra goodies:
+
+- Basic compilation for `armv7` using `musl-libc`. Not all libraries are supported at the moment, however.
+- [`mdbook`][mdbook] for building searchable HTML documentation from Markdown files. Build manuals to use alongside your `cargo doc` output!
 
 ## Making OpenSSL work
 
@@ -152,6 +158,7 @@ Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
 [MIT license](./LICENSE-MIT.txt).
 
 [Alpine Linux container]: https://hub.docker.com/_/alpine/
+[mdbook]: https://github.com/rust-lang-nursery/mdBook
 [musl-libc]: http://www.musl-libc.org/
 [musl-gcc]: http://www.musl-libc.org/how.html
 [rustup]: https://www.rustup.rs/

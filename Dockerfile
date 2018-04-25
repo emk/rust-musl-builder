@@ -12,6 +12,8 @@ ARG TOOLCHAIN=stable
 # We also set up a `rust` user by default, in whose account we'll install
 # the Rust toolchain.  This user has sudo privileges if you need to install
 # any more software.
+#
+# `mdbook` is the standard Rust tool for making searchable HTML manuals.
 RUN apt-get update && \
     apt-get install -y \
         build-essential \
@@ -30,7 +32,12 @@ RUN apt-get update && \
         gcc-4.7-multilib-arm-linux-gnueabihf \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    useradd rust --user-group --create-home --shell /bin/bash --groups sudo
+    useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
+    MDBOOK_VERSION=0.1.5 && \
+    curl -LO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    mv mdbook /usr/local/bin/ && \
+    rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz
 
 # Allow sudo without a password.
 ADD sudoers /etc/sudoers.d/nopasswd
