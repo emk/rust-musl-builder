@@ -64,7 +64,7 @@ RUN git config --global credential.https://github.com.helper ghtoken
 # needed by the popular Rust `hyper` crate.
 RUN echo "Building OpenSSL" && \
     cd /tmp && \
-    OPENSSL_VERSION=1.0.2l && \
+    OPENSSL_VERSION=1.0.2o && \
     curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl linux-x86_64 && \
@@ -81,7 +81,7 @@ RUN echo "Building OpenSSL" && \
     \
     echo "Building libpq" && \
     cd /tmp && \
-    POSTGRESQL_VERSION=9.6.5 && \
+    POSTGRESQL_VERSION=9.6.8 && \
     curl -LO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
     tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
