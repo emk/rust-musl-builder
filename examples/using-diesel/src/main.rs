@@ -1,12 +1,12 @@
 #[macro_use]
 extern crate diesel;
-extern crate openssl_sys;
+extern crate openssl;
 
 use diesel::connection::Connection;
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use diesel::sqlite::SqliteConnection;
-use diesel::types::{HasSqlType, Integer, Text};
+use diesel::sql_types::{HasSqlType, Integer, Text};
 use std::env;
 
 table! {
