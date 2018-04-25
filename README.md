@@ -30,10 +30,7 @@ With a bit of luck, you should be able to just copy your application binary from
 - OpenSSL, which is needed by many Rust applications.
 - `libpq`, which is needed for applications that use `diesel` with PostgreSQL. Note that this may be broken under Rust 1.21.0 and later (see https://github.com/emk/rust-musl-builder/issues/27).
 - `libz`, which is needed by `libpq`.
-
-You can also use the following libraries with a bit of setup:
-
-- SQLite3 with `diesel`. See [examples/using-diesel](./examples/using-diesel/).
+- SQLite3. See [examples/using-diesel](./examples/using-diesel/).
 
 This library also sets up the environment variables needed to compile popular Rust crates using these libraries.
 
@@ -63,13 +60,13 @@ In addition to setting up OpenSSL, you'll need to add the following lines to you
 
 ```toml
 [dependencies]
-# This is needed to make sure that Cargo statically links against
-# `libssl`. This should happen automatically, but it doesn't.
-openssl-sys = "0.9"
+diesel = { version = "1", features = ["postgres", "sqlite"] }
 
-[patch.crates-io]
-# This is needed to handle cross-compilation of libpq.
-pq-sys = { git = 'https://github.com/golddranks/pq-sys' }
+# Needed for sqlite.
+libsqlite3-sys = { version = "*", features = ["bundled"] }
+
+# Needed for Postgres.
+openssl = "*"
 ```
 
 See [this PR](https://github.com/sgrif/pq-sys/pull/18) for a discussion of the issues involved in cross-compiling `diesel` and `diesel_codegen`.

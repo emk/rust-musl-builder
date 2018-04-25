@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Eric Kidd <git@randomhacks.net>"]
 
 [dependencies]
-diesel = { version = "*", features = ["postgres", "sqlite"] }
+diesel = { version = "1", features = ["postgres", "sqlite"] }
 # Needed for sqlite.
 libsqlite3-sys = { version = "*", features = ["bundled"] }
 # Needed for Postgres.
