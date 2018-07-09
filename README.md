@@ -69,6 +69,12 @@ libsqlite3-sys = { version = "*", features = ["bundled"] }
 openssl = "*"
 ```
 
+For PostgreSQL, you'll also need to include `openssl` in your `main.rs` (in order to avoid linker errors):
+
+```toml
+extern crate openssl;
+```
+
 See [this PR](https://github.com/sgrif/pq-sys/pull/18) for a discussion of the issues involved in cross-compiling `diesel` and `diesel_codegen`.
 
 ## Making static releases with Travis CI and GitHub
