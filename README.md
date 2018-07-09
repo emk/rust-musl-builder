@@ -22,6 +22,20 @@ Binaries will be written to `target/$TARGET_ARCHITECTURE/release`. By default it
 
 With a bit of luck, you should be able to just copy your application binary from `target/x86_64-unknown-linux-musl/release`, and install it directly on any reasonably modern x86_64 Linux machine.  In particular, you should be able make static release binaries using TravisCI and GitHub, or you can copy your Rust application into an [Alpine Linux container][]. See below for details!
 
+## Caching builds
+
+You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:
+
+```
+-v cargo-git:/home/rust/.cargo/git -v cargo-registry:/home/rust/.cargo/registry
+```
+
+You will also need to fix the permissions on the mounted volumes:
+
+```sh
+rust-musl-builder sudo chown -R rust:rust /home/rust/.cargo/git /home/rust/.cargo/registry
+```
+
 ## How it works
 
 `rust-musl-builder` uses [musl-libc][], [musl-gcc][], and the new [rustup][] `target` support.  It includes static versions of several libraries:
