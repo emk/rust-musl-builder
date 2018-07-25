@@ -54,6 +54,7 @@ This image also supports the following extra goodies:
 
 - Basic compilation for `armv7` using `musl-libc`. Not all libraries are supported at the moment, however.
 - [`mdbook`][mdbook] for building searchable HTML documentation from Markdown files. Build manuals to use alongside your `cargo doc` output!
+- [`cargo audit`][audit] to check your Rust project for known security issues.
 
 ## Making OpenSSL work
 
@@ -175,6 +176,7 @@ Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
 [MIT license](./LICENSE-MIT.txt).
 
 [Alpine Linux container]: https://hub.docker.com/_/alpine/
+[audit]: https://github.com/RustSec/cargo-audit
 [mdbook]: https://github.com/rust-lang-nursery/mdBook
 [musl-libc]: http://www.musl-libc.org/
 [musl-gcc]: http://www.musl-libc.org/how.html

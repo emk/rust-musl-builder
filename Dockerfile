@@ -113,6 +113,10 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
 # libraries needed by the most popular and common Rust crates, to avoid
 # everybody needing to build them manually.)
 
+# Install some useful Rust tools from source. This will use the static linking
+# toolchain, but that should be OK.
+RUN cargo install -f cargo-audit
+
 # Expect our source code to live in /home/rust/src.  We'll run the build as
 # user `rust`, which will be uid 1000, gid 1000 outside the container.
 WORKDIR /home/rust/src
