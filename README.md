@@ -144,6 +144,18 @@ For a working example, see [faradayio/cage][cage].
 [uploading]: https://docs.travis-ci.com/user/deployment/releases
 [cage]: https://github.com/faradayio/cage
 
+## Using as a stage in Drone CI
+To make it work with Drone CI you have to run the cargo utility under `rust` user but there is no easy way of doing that, and drone runs by default as `root`. Fortunately, there is a trick with `runuser` utility:
+
+```yaml
+build:
+  image: ekidd/rust-musl-builder
+  commands:
+    - sudo chown -R rust:rust /home/rust/.cargo
+    - sudo chown -R rust:rust /drone/src
+    - runuser -l rust -c 'cd /drone/src/<your git repo git cloned> && OPENSSL_DIR=/usr/local/musl/ cargo build --locked --target=x86_64-unknown-linux-musl --release -v'
+```
+
 ## Making tiny Docker images with Alpine Linux and Rust binaries
 
 Docker now supports [multistage builds][multistage], which make it easy to build your Rust application with `rust-musl-builder` and deploy it using [Alpine Linux][]. For a working example, see [`examples/using-diesel/Dockerfile`](./examples/using-diesel/Dockerfile).
