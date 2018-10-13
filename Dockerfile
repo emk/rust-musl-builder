@@ -21,6 +21,7 @@ RUN apt-get update && \
         curl \
         file \
         git \
+	golang \
         musl-dev \
         musl-tools \
         libpq-dev \
@@ -38,6 +39,9 @@ RUN apt-get update && \
     tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv mdbook /usr/local/bin/ && \
     rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz
+
+# Static linking for C++ code
+RUN sudo ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
 
 # Allow sudo without a password.
 ADD sudoers /etc/sudoers.d/nopasswd
