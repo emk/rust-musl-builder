@@ -21,7 +21,6 @@ RUN apt-get update && \
         curl \
         file \
         git \
-        golang \
         musl-dev \
         musl-tools \
         libpq-dev \
