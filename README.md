@@ -12,6 +12,7 @@ rust-musl-builder cargo build --release
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000. At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
 
 To target ARM hard float (Raspberry Pi):
+
 ```sh
 rust-musl-builder cargo build --target=armv7-unknown-linux-musleabihf --release
 ```
@@ -27,13 +28,16 @@ With a bit of luck, you should be able to just copy your application binary from
 You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:
 
 ```
--v cargo-git:/home/rust/.cargo/git -v cargo-registry:/home/rust/.cargo/registry
+-v cargo-git:/home/rust/.cargo/git
+-v cargo-registry:/home/rust/.cargo/registry
+-v target:/home/rust/src/target
 ```
 
 You will also need to fix the permissions on the mounted volumes:
 
 ```sh
-rust-musl-builder sudo chown -R rust:rust /home/rust/.cargo/git /home/rust/.cargo/registry
+rust-musl-builder sudo chown -R rust:rust \
+  /home/rust/.cargo/git /home/rust/.cargo/registry /home/rust/src/target
 ```
 
 ## How it works
@@ -84,13 +88,15 @@ libsqlite3-sys = { version = "*", features = ["bundled"] }
 openssl = "*"
 ```
 
-For PostgreSQL, you'll also need to include `openssl` in your `main.rs` (in order to avoid linker errors):
+For PostgreSQL, you'll also need to include `diesel` and `openssl` in your `main.rs` in the following order (in order to avoid linker errors):
 
 ```toml
 extern crate openssl;
+#[macro_use]
+extern crate diesel;
 ```
 
-See [this PR](https://github.com/sgrif/pq-sys/pull/18) for a discussion of the issues involved in cross-compiling `diesel` and `diesel_codegen`.
+If this doesn't work, you _might_ be able to fix it by reversing the order. See [this PR](https://github.com/emk/rust-musl-builder/issues/69) for a discussion of the latest issues involved in linking to `diesel`, `pq-sys` and `openssl-sys`.
 
 ## Making static releases with Travis CI and GitHub
 
