@@ -1,6 +1,5 @@
-# Use Debian 16.04 as the base for our Rust musl toolchain, because of
-# https://github.com/rust-lang/rust/issues/34978 (as of Rust 1.11).
-FROM ubuntu:16.04
+# Use Ubuntu 18.04 LTS as our base image.
+FROM ubuntu:18.04
 
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=stable
@@ -29,11 +28,11 @@ RUN apt-get update && \
         pkgconf \
         sudo \
         xutils-dev \
-        gcc-4.7-multilib-arm-linux-gnueabihf \
+        gcc-multilib-arm-linux-gnueabihf \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
-    MDBOOK_VERSION=0.1.5 && \
+    MDBOOK_VERSION=0.2.1 && \
     curl -LO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv mdbook /usr/local/bin/ && \
@@ -74,30 +73,31 @@ RUN git config --global credential.https://github.com.helper ghtoken
 # needed by the popular Rust `hyper` crate.
 RUN echo "Building OpenSSL" && \
     cd /tmp && \
-    OPENSSL_VERSION=1.0.2o && \
+    OPENSSL_VERSION=1.1.1b && \
     curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
-    env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl linux-x86_64 && \
+    env CC=musl-gcc ./Configure no-shared no-zlib no-async no-engine -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     make && sudo make install && \
-    \
-    echo "Building zlib" && \
+    rm -r /tmp/*
+
+RUN echo "Building zlib" && \
     cd /tmp && \
     ZLIB_VERSION=1.2.11 && \
     curl -LO "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
     tar xzf "zlib-$ZLIB_VERSION.tar.gz" && cd "zlib-$ZLIB_VERSION" && \
     CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
     make && sudo make install && \
-    \
-    echo "Building libpq" && \
+    rm -r /tmp/*
+
+RUN echo "Building libpq" && \
     cd /tmp && \
-    POSTGRESQL_VERSION=9.6.8 && \
+    POSTGRESQL_VERSION=11.2 && \
     curl -LO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
     tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
     cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && \
     cd ../../bin/pg_config && make && sudo make install && \
-    \
     rm -r /tmp/*
 
 ENV OPENSSL_DIR=/usr/local/musl/ \

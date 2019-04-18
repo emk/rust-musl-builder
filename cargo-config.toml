@@ -3,4 +3,4 @@
 target = "x86_64-unknown-linux-musl"
 
 [target.armv7-unknown-linux-musleabihf]
-linker = "arm-linux-gnueabihf-gcc-4.7"
+linker = "arm-linux-gnueabihf-gcc"

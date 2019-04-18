@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Abort if anything goes wrong.
+set -euo pipefail
+
+# Make sure we can build some of our more important test images.
+for EXAMPLE in using-diesel; do
+    docker build -t rust-musl-builder-"$EXAMPLE" examples/"$EXAMPLE"
+done
