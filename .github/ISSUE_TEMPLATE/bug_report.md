@@ -7,21 +7,19 @@ assignees: emk
 
 ---
 
-Thank you for your bug report!
-
 **What did you try to do?**
 
 Please include the steps you took, including the commands you ran in your terminal.
 
-If you can simplify this or provide a link to a small public repository that demonstrates the bug, that would be extremely helpful.
+(If you can simplify this or provide a link to a small public repository that demonstrates the bug, that would be extremely helpful.)
 
 **What happened?**
 
-Please include the full text of any error messages.
+(Please include the full text of any error messages.)
 
 **What did you hope to happen?**
 
-A clear and concise description of what you expected to happen.
+(A clear and concise description of what you expected to happen.)
 
 **Does `./test-image` work?**
 
