@@ -5,5 +5,8 @@ set -euo pipefail
 
 # Make sure we can build some of our more important test images.
 for EXAMPLE in using-diesel; do
-    docker build -t rust-musl-builder-"$EXAMPLE" examples/"$EXAMPLE"
+    docker build \
+        --build-arg BASE_IMAGE="$IMAGE_NAME" \
+        -t rust-musl-builder-"$EXAMPLE" \
+        examples/"$EXAMPLE"
 done

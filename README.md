@@ -23,6 +23,29 @@ Binaries will be written to `target/$TARGET_ARCHITECTURE/release`. By default it
 
 With a bit of luck, you should be able to just copy your application binary from `target/x86_64-unknown-linux-musl/release`, and install it directly on any reasonably modern x86_64 Linux machine.  In particular, you should be able make static release binaries using TravisCI and GitHub, or you can copy your Rust application into an [Alpine Linux container][]. See below for details!
 
+## Available tags
+
+In general, we provide the following tagged Docker images:
+
+- `latest`, `stable`: Current stable Rust, with OpenSSL 1.0 (for now). We
+  try to update this fairly rapidly after every new stable release, and
+  after most point releases.
+- `beta`: This usually gets updated every six weeks alongside the stable
+  release. It will usually not be updated for beta bugfix releases.
+- `nightly-YYYY-MM-DD`: Specific nightly releases. These should almost
+  always support `clippy`, `rls` and `rustfmt`, as verified using
+  [rustup components history][comp]. If you need a specific date for
+  compatibility with `tokio` or another popular library using unstable
+  Rust, please file an issue.
+- `stable-openssl11`: Current stable Rust, with OpenSSL 1.1.
+- `nightly-YYYY-MM-DD-openssl11`: Specific nightly releases with OpenSSL
+  1.1.
+
+At a minimum, each of these images should be able to
+compile [examples/using-diesel](./examples/using-diesel).
+
+[comp]: https://rust-lang.github.io/rustup-components-history/index.html
+
 ## Caching builds
 
 You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:

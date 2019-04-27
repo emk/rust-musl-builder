@@ -4,6 +4,10 @@ FROM ubuntu:18.04
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=stable
 
+# The OpenSSL version to use. We parameterize this because many Rust
+# projects will fail to build with 1.1.
+ARG OPENSSL_VERSION=1.0.2r
+
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
 # large selection of the most popular crates.
@@ -73,7 +77,6 @@ RUN git config --global credential.https://github.com.helper ghtoken
 # needed by the popular Rust `hyper` crate.
 RUN echo "Building OpenSSL" && \
     cd /tmp && \
-    OPENSSL_VERSION=1.1.1b && \
     curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib no-async no-engine -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
