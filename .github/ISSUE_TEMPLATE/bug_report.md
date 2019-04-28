@@ -19,8 +19,6 @@ Please include the steps you took, including the commands you ran in your termin
 
 **What did you hope to happen?**
 
-(A clear and concise description of what you expected to happen.)
-
 **Does `./test-image` work?**
 
 If you check out the repository on a Mac or Linux system and run `./build-image`, does it succeed or fail? This will build several known-good examples from the `rust-musl-builder/examples` directory.
