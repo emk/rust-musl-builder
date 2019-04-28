@@ -1,14 +1,47 @@
 #!/bin/bash
+#
+# This script is responsible for calling `docker build` on behalf of GitHub. But
+# what it _really_ does is translate `DOCKER_TAG` into the builds args `TARGET`
+# and `OPENSSL_VERSION`.
 
 # Abort if anything goes wrong.
 set -euo pipefail
 
-# Always map the Docker tag `latest` to stable Rust.
-if [ "$DOCKER_TAG" == "latest" ]; then
-  TOOLCHAIN=stable
-else
-  TOOLCHAIN="$DOCKER_TAG"
-fi
+# Default to using OpenSSL 1.0 for a while longer, because 1.1 is
+# incompatible with the crates postgres 0.15 and openssl 0.9, which
+# are still widely used.
+OPENSSL_VERSION=1.0.2r
+
+# Pick an appropriate Docker tag
+case "$DOCKER_TAG" in
+  *-openssl11)
+    DOCKER_TAG_WITHOUT_OPENSSL="${DOCKER_TAG/-openssl11/}"
+    OPENSSL_VERSION=1.1.1b
+    ;;
+  *)
+    DOCKER_TAG_WITHOUT_OPENSSL="$DOCKER_TAG"
+    ;;
+esac
+
+# Decide what Rust toolchain to use.
+case "$DOCKER_TAG_WITHOUT_OPENSSL" in
+  # Always map the Docker tags `latest` and `experimental` to stable Rust.
+  latest)
+    TOOLCHAIN=stable
+    ;;
+  # Strip `experimental-` from other `experimental-*` tags.
+  experimental-*)
+    TOOLCHAIN="${DOCKER_TAG_WITHOUT_OPENSSL/experimental-/}"
+    ;;
+  # Pass all other tags through.
+  *)
+    TOOLCHAIN="$DOCKER_TAG_WITHOUT_OPENSSL"
+    ;;
+esac
 
 # Run the build.
-docker build --build-arg TOOLCHAIN="$TOOLCHAIN" -t "$IMAGE_NAME" .
+docker build \
+  --build-arg TOOLCHAIN="$TOOLCHAIN" \
+  --build-arg OPENSSL_VERSION="$OPENSSL_VERSION" \
+  -t "$IMAGE_NAME" \
+  .
