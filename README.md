@@ -68,7 +68,7 @@ rust-musl-builder sudo chown -R rust:rust \
 
 - The standard `musl-libc` libraries.
 - OpenSSL, which is needed by many Rust applications.
-- `libpq`, which is needed for applications that use `diesel` with PostgreSQL. Note that this may be broken under Rust 1.21.0 and later (see https://github.com/emk/rust-musl-builder/issues/27).
+- `libpq`, which is needed for applications that use `diesel` with PostgreSQL.
 - `libz`, which is needed by `libpq`.
 - SQLite3. See [examples/using-diesel](./examples/using-diesel/).
 
