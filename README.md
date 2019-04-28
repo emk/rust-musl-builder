@@ -2,6 +2,9 @@
 
 [![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
 
+**NOTE:** The underlying build image is now running Ubuntu 18.04 and newer
+versions of several libraries. Please report any problems!
+
 Do you want to compile a completely static Rust binary with no external dependencies?  If so, try:
 
 ```sh
@@ -11,13 +14,7 @@ rust-musl-builder cargo build --release
 
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000. At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
 
-To target ARM hard float (Raspberry Pi):
-
-```sh
-rust-musl-builder cargo build --target=armv7-unknown-linux-musleabihf --release
-```
-
-Binaries will be written to `target/$TARGET_ARCHITECTURE/release`. By default it targets `x86_64-unknown-linux-musl` unless specified with `--target`.
+For a more realistic example, see the `Dockerfile` for [examples/using-diesel](./examples/using-diesel).
 
 ## Deploying your Rust application
 
@@ -30,6 +27,7 @@ In general, we provide the following tagged Docker images:
 - `latest`, `stable`: Current stable Rust, with OpenSSL 1.0 (for now). We
   try to update this fairly rapidly after every new stable release, and
   after most point releases.
+- `X.Y.Z`: Specific versions of stable Rust.
 - `beta`: This usually gets updated every six weeks alongside the stable
   release. It will usually not be updated for beta bugfix releases.
 - `nightly-YYYY-MM-DD`: Specific nightly releases. These should almost
@@ -38,7 +36,8 @@ In general, we provide the following tagged Docker images:
   compatibility with `tokio` or another popular library using unstable
   Rust, please file an issue.
 - `stable-openssl11`: Current stable Rust, with OpenSSL 1.1.
-- `nightly-YYYY-MM-DD-openssl11`: Specific nightly releases with OpenSSL
+- `X.Y.Z-openssl11`: Specific versions of stable Rust, with OpenSSL 1.1.
+- `nightly-YYYY-MM-DD-openssl11`: Specific nightly releases, with OpenSSL
   1.1.
 
 At a minimum, each of these images should be able to
@@ -185,6 +184,18 @@ Docker now supports [multistage builds][multistage], which make it easy to build
 If you're using Docker crates which require specific C libraries to be installed, you can create a `Dockerfile` based on this one, and use `musl-gcc` to compile the libraries you need.  For an example, see [`examples/adding-a-library/Dockerfile`](./examples/adding-a-library/Dockerfile). This usually involves a bit of experimentation for each new library, but it seems to work well for most simple, standalone libraries.
 
 If you need an especially common library, please feel free to submit a pull request adding it to the main `Dockerfile`!  We'd like to support popular Rust crates out of the box.
+
+## ARM support (experimental)
+
+To target ARM hard float (Raspberry Pi):
+
+```sh
+rust-musl-builder cargo build --target=armv7-unknown-linux-musleabihf --release
+```
+
+Binaries will be written to `target/$TARGET_ARCHITECTURE/release`. By default it targets `x86_64-unknown-linux-musl` unless specified with `--target`.
+
+This is missing many of the libraries used by the `x86_64` build, and it should probably be split out of the base image and given its own tags.
 
 ## Development notes
 
