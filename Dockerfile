@@ -29,6 +29,7 @@ RUN apt-get update && \
         libpq-dev \
         libsqlite-dev \
         libssl-dev \
+        linux-libc-dev \
         pkgconf \
         sudo \
         xutils-dev \
@@ -73,15 +74,27 @@ ADD cargo-config.toml /home/rust/.cargo/config
 ADD git-credential-ghtoken /usr/local/bin
 RUN git config --global credential.https://github.com.helper ghtoken
 
-# Build a static library version of OpenSSL using musl-libc.  This is
-# needed by the popular Rust `hyper` crate.
+# Build a static library version of OpenSSL using musl-libc.  This is needed by
+# the popular Rust `hyper` crate.
+#
+# We point /usr/local/musl/include/linux at some Linux kernel headers (not
+# necessarily the right ones) in an effort to compile OpenSSL 1.1's "engine"
+# component. It's possible that this will cause bizarre and terrible things to
+# happen. There may be "sanitized" header
 RUN echo "Building OpenSSL" && \
+    ls /usr/include/linux && \
+    sudo mkdir -p /usr/local/musl/include && \
+    sudo ln -s /usr/include/linux /usr/local/musl/include/linux && \
+    sudo ln -s /usr/include/x86_64-linux-gnu/asm /usr/local/musl/include/asm && \
+    sudo ln -s /usr/include/asm-generic /usr/local/musl/include/asm-generic && \
     cd /tmp && \
     curl -LO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
-    make && sudo make install && \
+    env C_INCLUDE_PATH=/usr/local/musl/include/ make && \
+    sudo make install && \
+    sudo rm /usr/local/musl/include/linux /usr/local/musl/include/asm /usr/local/musl/include/asm-generic && \
     rm -r /tmp/*
 
 RUN echo "Building zlib" && \
