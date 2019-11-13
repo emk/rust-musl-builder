@@ -7,10 +7,7 @@
 FROM ekidd/rust-musl-builder AS builder
 
 # Add our source code.
-ADD . ./
-
-# Fix permissions on source code.
-RUN sudo chown -R rust:rust /home/rust
+ADD --chown=rust:rust . ./
 
 # Build our application.
 RUN cargo build
