@@ -134,7 +134,11 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
 
 # Install some useful Rust tools from source. This will use the static linking
 # toolchain, but that should be OK.
+#
+# We include cargo-audit for compatibility with earlier versions of this image,
+# but cargo-deny provides a super-set of cargo-audit's features.
 RUN cargo install -f cargo-audit && \
+    cargo install -f cargo-deny && \
     rm -rf /home/rust/.cargo/registry/
 
 # Expect our source code to live in /home/rust/src.  We'll run the build as
