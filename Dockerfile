@@ -71,7 +71,7 @@ ADD cargo-config.toml /home/rust/.cargo/config
 
 # Set up a `git credentials` helper for using GH_USER and GH_TOKEN to access
 # private repositories if desired.
-ADD git-credential-ghtoken /usr/local/bin
+ADD git-credential-ghtoken /usr/local/bin/ghtoken
 RUN git config --global credential.https://github.com.helper ghtoken
 
 # Build a static library version of OpenSSL using musl-libc.  This is needed by
