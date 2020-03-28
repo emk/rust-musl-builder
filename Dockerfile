@@ -24,6 +24,7 @@ RUN apt-get update && \
         curl \
         file \
         git \
+        graphviz \
         musl-dev \
         musl-tools \
         libpq-dev \
@@ -37,11 +38,16 @@ RUN apt-get update && \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
-    MDBOOK_VERSION=0.2.1 && \
-    curl -LO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
-    tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    MDBOOK_VERSION=0.3.6 && \
+    curl -LO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
+    tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     mv mdbook /usr/local/bin/ && \
-    rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz
+    rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
+    DENY_VERSION=0.6.6 && \
+    curl -LO https://github.com/EmbarkStudios/cargo-deny/releases/download/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    tar xf cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    mv cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl/cargo-deny /usr/local/bin/ && \
+    rm -rf cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz 
 
 # Static linking for C++ code
 RUN sudo ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
@@ -138,7 +144,7 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
 # We include cargo-audit for compatibility with earlier versions of this image,
 # but cargo-deny provides a super-set of cargo-audit's features.
 RUN cargo install -f cargo-audit && \
-    cargo install -f cargo-deny && \
+    cargo install -f mdbook-graphviz && \
     rm -rf /home/rust/.cargo/registry/
 
 # Expect our source code to live in /home/rust/src.  We'll run the build as

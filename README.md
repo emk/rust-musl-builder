@@ -49,7 +49,7 @@ compile [examples/using-diesel](./examples/using-diesel).
 
 You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:
 
-```
+```txt
 -v cargo-git:/home/rust/.cargo/git
 -v cargo-registry:/home/rust/.cargo/registry
 -v target:/home/rust/src/target
@@ -79,7 +79,7 @@ This library also sets up the environment variables needed to compile popular Ru
 This image also supports the following extra goodies:
 
 - Basic compilation for `armv7` using `musl-libc`. Not all libraries are supported at the moment, however.
-- [`mdbook`][mdbook] for building searchable HTML documentation from Markdown files. Build manuals to use alongside your `cargo doc` output!
+- [`mdbook`][mdbook] and `mdbook-graphviz` for building searchable HTML documentation from Markdown files. Build manuals to use alongside your `cargo doc` output!
 - [`cargo audit`][audit] to check your Rust project for known security issues.
 
 ## Making OpenSSL work
