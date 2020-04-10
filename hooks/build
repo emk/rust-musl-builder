@@ -7,16 +7,19 @@
 # Abort if anything goes wrong.
 set -euo pipefail
 
-# Default to using OpenSSL 1.0 for a while longer, because 1.1 is
-# incompatible with the crates postgres 0.15 and openssl 0.9, which
-# are still widely used.
-OPENSSL_VERSION=1.0.2r
+# Default to using OpenSSL 1.1 now, because 1.0 has stopped receiving security
+# updates. 1.1 is incompatible with the crates postgres 0.15 and openssl 0.9,
+# so we do offer the option of falling back to 1.0.
+OPENSSL_VERSION=1.1.1f
 
 # Pick an appropriate Docker tag
 case "$DOCKER_TAG" in
   *-openssl11)
     DOCKER_TAG_WITHOUT_OPENSSL="${DOCKER_TAG/-openssl11/}"
-    OPENSSL_VERSION=1.1.1b
+    ;;
+  *-openssl10)
+    DOCKER_TAG_WITHOUT_OPENSSL="${DOCKER_TAG/-openssl10/}"
+    OPENSSL_VERSION=1.0.2u
     ;;
   *)
     DOCKER_TAG_WITHOUT_OPENSSL="$DOCKER_TAG"

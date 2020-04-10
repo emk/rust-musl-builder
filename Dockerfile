@@ -6,7 +6,7 @@ ARG TOOLCHAIN=stable
 
 # The OpenSSL version to use. We parameterize this because many Rust
 # projects will fail to build with 1.1.
-ARG OPENSSL_VERSION=1.0.2r
+ARG OPENSSL_VERSION=1.1.1f
 
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
@@ -39,12 +39,12 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
     MDBOOK_VERSION=0.3.6 && \
-    curl -LO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
+    curl -fLO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     mv mdbook /usr/local/bin/ && \
     rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     DENY_VERSION=0.6.6 && \
-    curl -LO https://github.com/EmbarkStudios/cargo-deny/releases/download/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    curl -fLO https://github.com/EmbarkStudios/cargo-deny/releases/download/$DENY_VERSION/cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl/cargo-deny /usr/local/bin/ && \
     rm -rf cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$DENY_VERSION-x86_64-unknown-linux-musl.tar.gz 
@@ -94,8 +94,10 @@ RUN echo "Building OpenSSL" && \
     sudo ln -s /usr/include/x86_64-linux-gnu/asm /usr/local/musl/include/asm && \
     sudo ln -s /usr/include/asm-generic /usr/local/musl/include/asm-generic && \
     cd /tmp && \
-    curl -LO "https://github.com/openssl/openssl/archive/OpenSSL_$OPENSSL_VERSION.tar.gz" && \
-    tar xvzf "OpenSSL_$OPENSSL_VERSION.tar.gz" && cd "openssl-OpenSSL_$OPENSSL_VERSION" && \
+    short_version="$(echo "$OPENSSL_VERSION" | sed s'/[a-z]$//' )" && \
+    curl -fLO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" || \
+        curl -fLO "https://www.openssl.org/source/old/$short_version/openssl-$OPENSSL_VERSION.tar.gz" && \
+    tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make && \
@@ -106,7 +108,7 @@ RUN echo "Building OpenSSL" && \
 RUN echo "Building zlib" && \
     cd /tmp && \
     ZLIB_VERSION=1.2.11 && \
-    curl -LO "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
+    curl -fLO "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" && \
     tar xzf "zlib-$ZLIB_VERSION.tar.gz" && cd "zlib-$ZLIB_VERSION" && \
     CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
     make && sudo make install && \
@@ -115,7 +117,7 @@ RUN echo "Building zlib" && \
 RUN echo "Building libpq" && \
     cd /tmp && \
     POSTGRESQL_VERSION=11.2 && \
-    curl -LO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
+    curl -fLO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
     tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
     CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
     cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && \

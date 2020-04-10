@@ -2,8 +2,15 @@
 
 [![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
 
-**NOTE:** The underlying build image is now running Ubuntu 18.04 and newer
-versions of several libraries. Please report any problems!
+**OPENSSL SECURITY NOTE:** Previously, `stable` included OpenSSL 1.0.2, and `stable-openssl11` included OpenSSL 1.1.1. However, OpenSSL 1.0.2 is **no longer receiving security fixes,** so the new tagging system will be:
+
+- `stable`: OpenSSL 1.1.1 and the latest stable Rust.
+- **DEPRECATED** `stable-openssl11`: OpenSSL 1.1 and Rust 1.42.0. This will no longer be updated. Use `stable` instead.
+- **DEPRECATED** `1.42.0-openssl10` and `nightly-2020-03-12-openssl10`: OpenSSL 1.0.2. These will not be updated to newer Rust. You will still be able to build newer OpenSSL 1.0.2 images manually.
+
+I hate to break compatibility with projects that require OpenSSL 1.0.2, but since it will receive no future security updates, I no longer feel comfortable supplying pre-built images.
+
+## What is this?
 
 Do you want to compile a completely static Rust binary with no external dependencies?  If so, try:
 
@@ -24,7 +31,7 @@ With a bit of luck, you should be able to just copy your application binary from
 
 In general, we provide the following tagged Docker images:
 
-- `latest`, `stable`: Current stable Rust, with OpenSSL 1.0 (for now). We
+- `latest`, `stable`: Current stable Rust, now with OpenSSL 1.1. We
   try to update this fairly rapidly after every new stable release, and
   after most point releases.
 - `X.Y.Z`: Specific versions of stable Rust.
@@ -35,10 +42,6 @@ In general, we provide the following tagged Docker images:
   [rustup components history][comp]. If you need a specific date for
   compatibility with `tokio` or another popular library using unstable
   Rust, please file an issue.
-- `stable-openssl11`: Current stable Rust, with OpenSSL 1.1.
-- `X.Y.Z-openssl11`: Specific versions of stable Rust, with OpenSSL 1.1.
-- `nightly-YYYY-MM-DD-openssl11`: Specific nightly releases, with OpenSSL
-  1.1.
 
 At a minimum, each of these images should be able to
 compile [examples/using-diesel](./examples/using-diesel).
