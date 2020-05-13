@@ -156,6 +156,7 @@ ENV OPENSSL_DIR=/usr/local/musl/ \
 # We include cargo-audit for compatibility with earlier versions of this image,
 # but cargo-deny provides a super-set of cargo-audit's features.
 RUN cargo install -f cargo-audit && \
+    cargo install -f cargo-deb && \
     cargo install -f mdbook-graphviz && \
     rm -rf /home/rust/.cargo/registry/
 
