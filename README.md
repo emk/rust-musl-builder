@@ -2,14 +2,6 @@
 
 [![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
 
-**OPENSSL SECURITY NOTE:** Previously, `stable` included OpenSSL 1.0.2, and `stable-openssl11` included OpenSSL 1.1.1. However, OpenSSL 1.0.2 is **no longer receiving security fixes,** so the new tagging system will be:
-
-- `stable`: OpenSSL 1.1.1 and the latest stable Rust.
-- **DEPRECATED** `stable-openssl11`: OpenSSL 1.1 and Rust 1.42.0. This will no longer be updated. Use `stable` instead.
-- **DEPRECATED** `1.42.0-openssl10` and `nightly-2020-03-12-openssl10`: OpenSSL 1.0.2. These will not be updated to newer Rust. You will still be able to build newer OpenSSL 1.0.2 images manually.
-
-I hate to break compatibility with projects that require OpenSSL 1.0.2, but since it will receive no future security updates, I no longer feel comfortable supplying pre-built images.
-
 ## What is this?
 
 Do you want to compile a completely static Rust binary with no external dependencies?  If so, try:
@@ -48,6 +40,16 @@ compile [examples/using-diesel](./examples/using-diesel).
 
 [comp]: https://rust-lang.github.io/rustup-components-history/index.html
 
+### OpenSSL security note
+
+Previously, `stable` included OpenSSL 1.0.2, and `stable-openssl11` included OpenSSL 1.1.1. However, OpenSSL 1.0.2 is **no longer receiving security fixes,** so the new tagging system will be:
+
+- `stable`: OpenSSL 1.1.1 and the latest stable Rust.
+- **DEPRECATED** `stable-openssl11`: OpenSSL 1.1 and Rust 1.42.0. This will no longer be updated. Use `stable` instead.
+- **DEPRECATED** `1.42.0-openssl10` and `nightly-2020-03-12-openssl10`: OpenSSL 1.0.2. These will not be updated to newer Rust. You will still be able to build newer OpenSSL 1.0.2 images manually.
+
+I hate to break compatibility with projects that require OpenSSL 1.0.2, but since it will receive no future security updates, I no longer feel comfortable supplying pre-built images.
+
 ## Caching builds
 
 You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:
@@ -83,8 +85,9 @@ This image also supports the following extra goodies:
 
 - Basic compilation for `armv7` using `musl-libc`. Not all libraries are supported at the moment, however.
 - [`mdbook`][mdbook] and `mdbook-graphviz` for building searchable HTML documentation from Markdown files. Build manuals to use alongside your `cargo doc` output!
-- [`cargo audit`][audit] to check your Rust project for known security issues.
+- [`cargo about`][about] to collect licenses for your dependencies.
 - [`cargo deb`][deb] to build Debian packages
+- [`cargo deny`][deny] to check your Rust project for known security issues.
 
 ## Making OpenSSL work
 
@@ -219,8 +222,9 @@ Either the [Apache 2.0 license](./LICENSE-APACHE.txt), or the
 [MIT license](./LICENSE-MIT.txt).
 
 [Alpine Linux container]: https://hub.docker.com/_/alpine/
-[audit]: https://github.com/RustSec/cargo-audit
+[about]: https://github.com/EmbarkStudios/cargo-about
 [deb]: https://github.com/mmstick/cargo-deb
+[deny]: https://github.com/EmbarkStudios/cargo-deny
 [mdbook]: https://github.com/rust-lang-nursery/mdBook
 [musl-libc]: http://www.musl-libc.org/
 [musl-gcc]: http://www.musl-libc.org/how.html
