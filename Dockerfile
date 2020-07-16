@@ -20,9 +20,9 @@ ARG OPENSSL_VERSION=1.1.1g
 # - https://github.com/EmbarkStudios/cargo-deny/releases
 # - http://zlib.net/
 # - https://ftp.postgresql.org/pub/source/
-ARG MDBOOK_VERSION=0.3.7
+ARG MDBOOK_VERSION=0.4.1
 ARG CARGO_ABOUT_VERSION=0.2.2
-ARG CARGO_DENY_VERSION=0.6.7
+ARG CARGO_DENY_VERSION=0.7.0
 ARG ZLIB_VERSION=1.2.11
 ARG POSTGRESQL_VERSION=11.8
 
