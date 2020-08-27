@@ -22,9 +22,9 @@ ARG OPENSSL_VERSION=1.1.1g
 # - https://ftp.postgresql.org/pub/source/
 ARG MDBOOK_VERSION=0.4.1
 ARG CARGO_ABOUT_VERSION=0.2.2
-ARG CARGO_DENY_VERSION=0.7.0
+ARG CARGO_DENY_VERSION=0.7.3
 ARG ZLIB_VERSION=1.2.11
-ARG POSTGRESQL_VERSION=11.8
+ARG POSTGRESQL_VERSION=11.9
 
 # Make sure we have basic dev tools for building C libraries.  Our goal
 # here is to support the musl-libc builds and Cargo builds needed for a
