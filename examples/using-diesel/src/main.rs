@@ -46,6 +46,8 @@ where
 }
 
 fn main() {
+    openssl_probe::init_ssl_cert_env_vars();
+
     println!("Hello, world!");
 
     // Only run our database example if we have a database. Otherwise, we just

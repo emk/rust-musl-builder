@@ -2,6 +2,8 @@
 
 [![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
 
+[Source on GitHub](https://github.com/emk/rust-musl-builder)
+
 ## What is this?
 
 Do you want to compile a completely static Rust binary with no external dependencies?  If so, try:
@@ -13,7 +15,7 @@ rust-musl-builder cargo build --release
 
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000. At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
 
-For a more realistic example, see the `Dockerfile` for [examples/using-diesel](./examples/using-diesel).
+For a more realistic example, see the `Dockerfile` for [examples/using-diesel](./examples/using-diesel) [examples/using-sqlx](./examples/using-sqlx).
 
 ## Deploying your Rust application
 
@@ -36,7 +38,7 @@ In general, we provide the following tagged Docker images:
   Rust, please file an issue.
 
 At a minimum, each of these images should be able to
-compile [examples/using-diesel](./examples/using-diesel).
+compile [examples/using-diesel](./examples/using-diesel) and [examples/using-sqlx](./examples/using-sqlx).
 
 [comp]: https://rust-lang.github.io/rustup-components-history/index.html
 
@@ -94,8 +96,6 @@ This image also supports the following extra goodies:
 If your application uses OpenSSL, you will also need to take a few extra steps to make sure that it can find OpenSSL's list of trusted certificates, which is stored in different locations on different Linux distributions. You can do this using [`openssl-probe`](https://crates.io/crates/openssl-probe) as follows:
 
 ```rust
-extern crate openssl_probe;
-
 fn main() {
     openssl_probe::init_ssl_cert_env_vars();
     //... your code
