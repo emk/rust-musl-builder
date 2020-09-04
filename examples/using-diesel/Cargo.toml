@@ -9,3 +9,4 @@ diesel = { version = "1", features = ["postgres", "sqlite"] }
 libsqlite3-sys = { version = "*", features = ["bundled"] }
 # Needed for Postgres.
 openssl = "*"
+openssl-probe = "0.1.2"

@@ -2,9 +2,16 @@
 
 [![Docker Image](https://img.shields.io/docker/pulls/ekidd/rust-musl-builder.svg?maxAge=2592000)](https://hub.docker.com/r/ekidd/rust-musl-builder/)
 
+- [Source on GitHub](https://github.com/emk/rust-musl-builder)
+- [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md)
+
+**UPDATED:** The OpenSSL configuration has changed to support `sqlx`. This may break very old versions of the `openssl` crate. If this affects you, please file an issue. See the [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md) for details.
+
 ## What is this?
 
-Do you want to compile a completely static Rust binary with no external dependencies?  If so, try:
+This image allows you to build static Rust binaries using `diesel`, `sqlx` or `openssl`. These images can be distributed as single executable files with no dependencies, and they should work on any modern Linux system.
+
+To try it, run:
 
 ```sh
 alias rust-musl-builder='docker run --rm -it -v "$(pwd)":/home/rust/src ekidd/rust-musl-builder'
@@ -13,7 +20,7 @@ rust-musl-builder cargo build --release
 
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000. At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
 
-For a more realistic example, see the `Dockerfile` for [examples/using-diesel](./examples/using-diesel).
+For a more realistic example, see the `Dockerfile`s for [examples/using-diesel](./examples/using-diesel) and [examples/using-sqlx](./examples/using-sqlx).
 
 ## Deploying your Rust application
 
@@ -36,19 +43,9 @@ In general, we provide the following tagged Docker images:
   Rust, please file an issue.
 
 At a minimum, each of these images should be able to
-compile [examples/using-diesel](./examples/using-diesel).
+compile [examples/using-diesel](./examples/using-diesel) and [examples/using-sqlx](./examples/using-sqlx).
 
 [comp]: https://rust-lang.github.io/rustup-components-history/index.html
-
-### OpenSSL security note
-
-Previously, `stable` included OpenSSL 1.0.2, and `stable-openssl11` included OpenSSL 1.1.1. However, OpenSSL 1.0.2 is **no longer receiving security fixes,** so the new tagging system will be:
-
-- `stable`: OpenSSL 1.1.1 and the latest stable Rust.
-- **DEPRECATED** `stable-openssl11`: OpenSSL 1.1 and Rust 1.42.0. This will no longer be updated. Use `stable` instead.
-- **DEPRECATED** `1.42.0-openssl10` and `nightly-2020-03-12-openssl10`: OpenSSL 1.0.2. These will not be updated to newer Rust. You will still be able to build newer OpenSSL 1.0.2 images manually.
-
-I hate to break compatibility with projects that require OpenSSL 1.0.2, but since it will receive no future security updates, I no longer feel comfortable supplying pre-built images.
 
 ## Caching builds
 
@@ -94,8 +91,6 @@ This image also supports the following extra goodies:
 If your application uses OpenSSL, you will also need to take a few extra steps to make sure that it can find OpenSSL's list of trusted certificates, which is stored in different locations on different Linux distributions. You can do this using [`openssl-probe`](https://crates.io/crates/openssl-probe) as follows:
 
 ```rust
-extern crate openssl_probe;
-
 fn main() {
     openssl_probe::init_ssl_cert_env_vars();
     //... your code
@@ -205,7 +200,7 @@ This is missing many of the libraries used by the `x86_64` build, and it should 
 
 ## Development notes
 
-After modifying the image, run `./test-image` to make sure that everything works.xs
+After modifying the image, run `./test-image` to make sure that everything works.
 
 ## Other ways to build portable Rust binaries
 
