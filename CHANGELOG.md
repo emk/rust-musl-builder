@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security are discovered in a library.
 
+## [UNRELEASED]
+
+This branch contains experimental changes intended to make it easier to support GitHub Actions.
+
+### Changed
+
+- You'll need to use `USER root` and `env RUSTUP_HOME=/opt/rust/rustup CARGO_HOME=/opt/rust/cargo rustup $ARGS` to install any new components.
+- `rustup`, `cargo`, and associated tools are all installed in `/opt/rust`, so that they should be available to the users `rust`, `root`, and any other users that get added.
+- Some other minor supporting tools like `git-credential-ghtoken` should now be available as `root`, as well.
+
+### Removed
+
+- ARM support has been removed, because it needs to be split into a separate base image. This would also allow us to build OpenSSL, etc., for ARM targets.
+- The `rust-docs` component is no longer installed by default.
+
 ## 2020-09-04
 
 ### Added
