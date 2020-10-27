@@ -149,7 +149,9 @@ ENV X86_64_UNKNOWN_LINUX_MUSL_OPENSSL_DIR=/usr/local/musl/ \
     PKG_CONFIG_ALLOW_CROSS=true \
     PKG_CONFIG_ALL_STATIC=true \
     LIBZ_SYS_STATIC=1 \
-    TARGET=musl
+    TARGET=musl \
+    RUSTUP_HOME=/home/rust/.rustup \
+    CARGO_HOME=/home/rust/.cargo
 
 # (Please feel free to submit pull requests for musl-libc builds of other C
 # libraries needed by the most popular and common Rust crates, to avoid
