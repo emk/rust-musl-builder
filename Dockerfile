@@ -4,13 +4,12 @@ FROM ubuntu:18.04
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=stable
 
-# The OpenSSL version to use. We parameterize this because many Rust projects
-# will fail to build with 1.1. Here is the place to check for new releases:
+# The OpenSSL version to use. Here is the place to check for new releases:
 #
 # - https://www.openssl.org/source/
 #
 # ALSO UPDATE hooks/build!
-ARG OPENSSL_VERSION=1.1.1g
+ARG OPENSSL_VERSION=1.1.1i
 
 # Versions for other dependencies. Here are the places to check for new
 # releases:
@@ -20,9 +19,12 @@ ARG OPENSSL_VERSION=1.1.1g
 # - https://github.com/EmbarkStudios/cargo-deny/releases
 # - http://zlib.net/
 # - https://ftp.postgresql.org/pub/source/
-ARG MDBOOK_VERSION=0.4.1
-ARG CARGO_ABOUT_VERSION=0.2.2
-ARG CARGO_DENY_VERSION=0.7.3
+#
+# We're stuck on PostgreSQL 11 until we figure out
+# https://github.com/emk/rust-musl-builder/issues.
+ARG MDBOOK_VERSION=0.4.4
+ARG CARGO_ABOUT_VERSION=0.2.3
+ARG CARGO_DENY_VERSION=0.8.5
 ARG ZLIB_VERSION=1.2.11
 ARG POSTGRESQL_VERSION=11.9
 
@@ -35,7 +37,8 @@ ARG POSTGRESQL_VERSION=11.9
 #
 # `mdbook` is the standard Rust tool for making searchable HTML manuals.
 RUN apt-get update && \
-    apt-get install -y \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get install -yq \
         build-essential \
         cmake \
         curl \

@@ -12,7 +12,7 @@ set -euo pipefail
 # we do offer the option of falling back to 1.0.
 #
 # Find the latest version at https://www.openssl.org/source/
-OPENSSL_VERSION=1.1.1g
+OPENSSL_VERSION=1.1.1i
 
 # Pick an appropriate Docker tag
 case "$DOCKER_TAG" in

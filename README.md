@@ -5,7 +5,7 @@
 - [Source on GitHub](https://github.com/emk/rust-musl-builder)
 - [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md)
 
-**UPDATED:** The OpenSSL configuration has changed to support `sqlx`. This may break very old versions of the `openssl` crate. If this affects you, please file an issue. See the [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md) for details.
+**UPDATED:** Major updates in this release which may break some builds. See [the CHANGELOG](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md) for details. If these updates break your build, you can update your `Dockerfile` to use `FROM ekidd/rust-musl-builder:1.48.0` to revert to the previous version.
 
 ## What is this?
 

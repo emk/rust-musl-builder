@@ -6,15 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security are discovered in a library.
 
-## [UNRELEASED]
+## 2021-01-04
 
-This branch contains experimental changes intended to make it easier to support GitHub Actions.
+This release contains a number of major changes, including dropping our ancient and incomplete ARM support and supporting building as `root` as a first step towards better supporting GitHub Actions.
 
 ### Changed
 
-- You'll need to use `USER root` and `env RUSTUP_HOME=/opt/rust/rustup CARGO_HOME=/opt/rust/cargo rustup $ARGS` to install any new components.
+- You'll need to use `USER root` and `env RUSTUP_HOME=/opt/rust/rustup CARGO_HOME=/opt/rust/cargo rustup $ARGS` to install any new Rust components using `rustup`.
 - `rustup`, `cargo`, and associated tools are all installed in `/opt/rust`, so that they should be available to the users `rust`, `root`, and any other users that get added.
 - Some other minor supporting tools like `git-credential-ghtoken` should now be available as `root`, as well.
+- We have updated our dependencies to the newest versions:
+  - OpenSSL 1.1.1i (contains security fixes)
+  - `mdbook` 0.4.4
+  - `cargo about` 0.2.3
+  - `cargo deny` 0.8.5 (may have breaking changes)
+- Our example programs now use newer versions of their Rust dependencies.
 
 ### Removed
 
