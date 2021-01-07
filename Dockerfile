@@ -22,7 +22,7 @@ ARG OPENSSL_VERSION=1.1.1i
 #
 # We're stuck on PostgreSQL 11 until we figure out
 # https://github.com/emk/rust-musl-builder/issues.
-ARG MDBOOK_VERSION=0.4.4
+ARG MDBOOK_VERSION=0.4.5
 ARG CARGO_ABOUT_VERSION=0.2.3
 ARG CARGO_DENY_VERSION=0.8.5
 ARG ZLIB_VERSION=1.2.11

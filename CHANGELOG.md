@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security are discovered in a library.
 
+## 2021-01-07
+
+### Fixed
+
+- SECURITY: Update `mdbook` to 0.4.5 to fix [CVE-2020-26297](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-26297), as [described on the Rust blog](https://blog.rust-lang.org/2021/01/04/mdbook-security-advisory.html). Thank you to Kyle McCarthy. This potentially affects people who use the bundled `mdbook` to build and publish their documentation.
+
 ## 2021-01-04
 
 This release contains a number of major changes, including dropping our ancient and incomplete ARM support and supporting building as `root` as a first step towards better supporting GitHub Actions.
