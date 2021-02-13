@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security are discovered in a library.
 
+## 2021-02-13
+
+### Changed
+
+- mdbook: Updated to 0.4.6.
+- Postgres: Updated to 11.11.
+
 ## 2021-01-07
 
 ### Fixed
