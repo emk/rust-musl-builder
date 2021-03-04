@@ -68,10 +68,17 @@ RUN apt-get update && \
     curl -fLO https://github.com/EmbarkStudios/cargo-deny/releases/download/$CARGO_DENY_VERSION/cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl/cargo-deny /usr/local/bin/ && \
-    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz
+    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    curl -fLO https://musl.cc/x86_64-linux-musl-cross.tgz && \
+    tar xf x86_64-linux-musl-cross.tgz && \
+    mv x86_64-linux-musl-cross /usr/local/musl-x86_64 && \
+    rm -f x86_64-linux-musl-cross.tgz
 
 # Static linking for C++ code
 RUN ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
+
+# Allow cross-compilation for musl code
+RUN rm /usr/bin/musl-gcc && ln -s /usr/local/musl-x86_64/bin/x86_64-linux-musl-gcc /usr/bin/musl-gcc
 
 # Build a static library version of OpenSSL using musl-libc.  This is needed by
 # the popular Rust `hyper` crate.
@@ -110,7 +117,7 @@ RUN echo "Building libpq" && \
     cd /tmp && \
     curl -fLO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
     tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
-    CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
+    CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --host=$(gcc -dumpmachine) --prefix=/usr/local/musl && \
     cd src/interfaces/libpq && make all-static-lib && make install-lib-static && \
     cd ../../bin/pg_config && make && make install && \
     rm -r /tmp/*
