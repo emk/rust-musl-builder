@@ -68,17 +68,22 @@ RUN apt-get update && \
     curl -fLO https://github.com/EmbarkStudios/cargo-deny/releases/download/$CARGO_DENY_VERSION/cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl/cargo-deny /usr/local/bin/ && \
-    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
-    curl -fLO https://musl.cc/x86_64-linux-musl-cross.tgz && \
-    tar xf x86_64-linux-musl-cross.tgz && \
-    mv x86_64-linux-musl-cross /usr/local/musl-x86_64 && \
-    rm -f x86_64-linux-musl-cross.tgz
+    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz
 
 # Static linking for C++ code
 RUN ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
 
 # Allow cross-compilation for musl code
-RUN rm /usr/bin/musl-gcc && ln -s /usr/local/musl-x86_64/bin/x86_64-linux-musl-gcc /usr/bin/musl-gcc
+RUN [ $(gcc -dumpmachine) = "aarch64-linux-gnu" ] && \
+    echo "Using aarch64 toolchain" && \
+    curl -fLO https://musl.cc/x86_64-linux-musl-cross.tgz && \
+    tar xf x86_64-linux-musl-cross.tgz && \
+    mv x86_64-linux-musl-cross /usr/local/musl-x86_64 && \
+    rm -f x86_64-linux-musl-cross.tgz && \
+    rm /usr/bin/musl-gcc && \
+    ln -s /usr/local/musl-x86_64/bin/x86_64-linux-musl-gcc /usr/bin/musl-gcc && \
+    ln -s /usr/local/musl-x86_64/bin/x86_64-linux-musl-ar /usr/bin/musl-ar \
+    || exit 0
 
 # Build a static library version of OpenSSL using musl-libc.  This is needed by
 # the popular Rust `hyper` crate.
@@ -156,6 +161,11 @@ RUN curl https://sh.rustup.rs -sSf | \
         rustup target add x86_64-unknown-linux-musl
 ADD cargo-config.toml /opt/rust/cargo/config
 
+# Extend the cargo config by the custom linker when building the aarch64 image
+RUN [ $(gcc -dumpmachine) = "aarch64-linux-gnu" ] && \
+    echo "\n[target.x86_64-unknown-linux-musl]\nlinker = \"/usr/local/musl-x86_64/bin/x86_64-linux-musl-gcc\"" >> /opt/rust/cargo/config \
+    || exit 0
+
 # Set up our environment variables so that we cross-compile using musl-libc by
 # default.
 ENV X86_64_UNKNOWN_LINUX_MUSL_OPENSSL_DIR=/usr/local/musl/ \
@@ -172,10 +182,12 @@ ENV X86_64_UNKNOWN_LINUX_MUSL_OPENSSL_DIR=/usr/local/musl/ \
 #
 # We include cargo-audit for compatibility with earlier versions of this image,
 # but cargo-deny provides a superset of cargo-audit's features.
-RUN env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-audit && \
+RUN [ $(gcc -dumpmachine) != "aarch64-linux-gnu" ] && \
+    env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-audit && \
     env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-deb && \
     env CARGO_HOME=/opt/rust/cargo cargo install -f mdbook-graphviz && \
-    rm -rf /opt/rust/cargo/registry/
+    rm -rf /opt/rust/cargo/registry/ \
+    || exit 0
 
 # Allow sudo without a password.
 ADD sudoers /etc/sudoers.d/nopasswd
