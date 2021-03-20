@@ -17,12 +17,14 @@ echo "==== Verifying static linking"
 
 # Make sure we can build a static executable using `sqlx`.
 docker build -t rust-musl-builder-using-sqlx examples/using-sqlx
-docker run --rm rust-musl-builder-using-sqlx sh -c "
+docker run --rm rust-musl-builder-using-sqlx bash -c "
 set -euo pipefail
 
 echo -e '--- Test case for sqlx:'
 echo 'ldd says:'
-if ldd /usr/local/bin/using-sqlx; then
+lddresult=\$(ldd /usr/local/bin/using-sqlx)
+echo \$lddresult
+if [[ "\$lddresult" != *statically\ linked* ]]; then
   echo '[FAIL] Executable is not static!' 1>&2
   exit 1
 fi
@@ -33,14 +35,16 @@ echo -e '[PASS] using-sqlx binary is statically linked.\n'
 docker build -t rust-musl-builder-linking-with-git2 examples/linking-with-git2
 docker run --rm rust-musl-builder-linking-with-git2 bash -c "
 set -euo pipefail
-cd /home/rust/src
 
 echo -e '--- Test case for libgit2:'
 echo 'ldd says:'
-if ldd target/x86_64-unknown-linux-musl/debug/linking-with-git2; then
+lddresult=\$(ldd /usr/local/bin/linking-with-git2)
+echo \$lddresult
+if [[ "\$lddresult" != *statically\ linked* ]]; then
   echo '[FAIL] Executable is not static!' 1>&2
   exit 1
 fi
+
 echo -e '[PASS] libgit2 binary is statically linked.\n'
 "
 

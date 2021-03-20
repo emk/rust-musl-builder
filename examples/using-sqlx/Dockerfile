@@ -17,8 +17,8 @@ ADD --chown=rust:rust . ./
 RUN cargo build --release
 
 # Now, we need to build our _real_ Docker container, copying in `using-sqlx`.
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+FROM debian:stretch-slim
+RUN apt-get update && apt-get install -y ca-certificates
 COPY --from=builder \
     /home/rust/src/target/x86_64-unknown-linux-musl/release/using-sqlx \
     /usr/local/bin/
