@@ -27,7 +27,7 @@ ARG CARGO_ABOUT_VERSION=0.2.3
 ARG CARGO_DENY_VERSION=0.8.5
 ARG ZLIB_VERSION=1.2.11
 ARG POSTGRESQL_VERSION=11.11
-
+ARG SCCACHE_VERSION=0.2.15
 # Make sure we have basic dev tools for building C libraries.  Our goal here is
 # to support the musl-libc builds and Cargo builds needed for a large selection
 # of the most popular crates.
@@ -61,6 +61,10 @@ RUN apt-get update && \
     tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     mv mdbook /usr/local/bin/ && \
     rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
+    curl -fLO https://github.com/mozilla/sccache/releases/download/v0.2.15/sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    tar xf sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    mv sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl/sccache /usr/local/bin/ && chmod +x /usr/local/bin/sccache && \
+    rm -rf sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl.tar.gz sccache-v$SCCACHE_VERSION-x86_64-unknown-linux-musl && \
     curl -fLO https://github.com/EmbarkStudios/cargo-about/releases/download/$CARGO_ABOUT_VERSION/cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl/cargo-about /usr/local/bin/ && \

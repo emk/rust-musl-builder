@@ -54,14 +54,14 @@ You may be able to speed up build performance by adding the following `-v` comma
 ```txt
 -v cargo-git:/home/rust/.cargo/git
 -v cargo-registry:/home/rust/.cargo/registry
--v target:/home/rust/src/target
+-v sccache:/home/rust/.cache/sccache
 ```
 
 You will also need to fix the permissions on the mounted volumes:
 
 ```sh
 rust-musl-builder sudo chown -R rust:rust \
-  /home/rust/.cargo/git /home/rust/.cargo/registry /home/rust/src/target
+  /home/rust/.cargo/git /home/rust/.cargo/registry /home/rust/.cache/sccache
 ```
 
 ## How it works
