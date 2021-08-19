@@ -27,8 +27,7 @@ jobs:
         with:
           push: true
           tags: |
-            docker.pkg.github.com/${{ github.repository }}/rust-musl-builder:${{ steps.branch_name.output.TAG }}
+            docker.pkg.github.com/${{ github.repository }}/rust-musl-builder:1.54.0
           build-args: |
-            TOOLCHAIN=${{ steps.branch_name.output.TAG }}
-            
-      
+            TOOLCHAIN=1.54.0
+        
