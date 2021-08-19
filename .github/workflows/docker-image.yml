@@ -1,0 +1,34 @@
+name: Docker Image CI
+
+on:
+  release:
+    types: [published]
+jobs:
+  push_to_registry:
+    name: Push Docker image to Github Packages
+    runs-on: ubuntu-latest
+    permissions: 
+      packages: write
+      contents: read
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Branch name
+        id: branch_name
+        run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+      - name: Log in to Github Docker Registry
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build container image
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: |
+            docker.pkg.github.com/${{ github.repository }}/rust-musl-builder:${{ steps.branch_name.output.TAG }}
+          build-args: |
+            TOOLCHAIN=${{ steps.branch_name.output.TAG }}
+            
+      
