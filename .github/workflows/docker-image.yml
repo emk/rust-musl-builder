@@ -19,7 +19,7 @@ jobs:
       - name: Log in to Github Docker Registry
         uses: docker/login-action@v1
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build container image
@@ -27,7 +27,7 @@ jobs:
         with:
           push: true
           tags: |
-            docker.pkg.github.com/${{ github.repository }}/rust-musl-builder:1.54.0
+            ghcr.io/${{ github.repository }}/rust-musl-builder:1.54.0
           build-args: |
             TOOLCHAIN=1.54.0
         
