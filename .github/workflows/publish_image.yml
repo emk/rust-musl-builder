@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-cross-base-image:
-    name: Publish cross images
+    name: Build & publish cross base image
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
