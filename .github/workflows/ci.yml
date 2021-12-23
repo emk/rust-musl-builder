@@ -1,0 +1,104 @@
+name: Test and publish image
+
+on:
+  schedule:
+    # Rust tends to make stable releases every six weeks on Thursday 10am
+    # Pacific Time. Force a build a few hours later than that (every week) to
+    # scoop up the newest stable and beta (including patch releases).
+    #
+    # This way, even if we don't update the matrix below we should still have
+    # images.
+    - cron: '0 21 * * THU'
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# See https://docs.github.com/en/actions/guides/publishing-docker-images for the
+# theory, but we do some things differently.
+
+jobs:
+  test_image:
+    name: Test static linking (using stable Rust)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      # Run some fairly extensive tests to make sure that we actually produce
+      # static, working programs.
+      - name: Test image
+        run: ./test-image
+
+  build_and_push:
+    name: Build image & push
+    runs-on: ubuntu-latest
+
+    needs:
+      - test_image
+
+    strategy:
+      matrix:
+        # We build multiple versions of the image from the same Dockerfile each
+        # time we push. This is different that the standard strategy for
+        # maintaining images using GitHub actions, which involves a lot of tags
+        # and branches. But since there are new Rust releases far more often
+        # than we change this project, it works.
+        toolchain:
+          - "stable"
+          - "beta"
+          - "1.57.0"
+
+          # We never built these, so include them until they get built and released once.
+          - 1.56.1
+          - 1.55.0
+          - 1.54.0
+          - 1.53.0
+          - 1.52.1
+
+          # See https://rust-lang.github.io/rustup-components-history/ and choose
+          # the newest nightly build that has all the components (except RLS,
+          # which is obsolete).
+          - "nightly-2021-12-23"
+
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to Docker Hub
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build release image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: |
+            TOOLCHAIN=${{ matrix.toolchain }}
+          # Use some slightly funky substituations to tag only `stable` as `latest`.
+          tags: |
+            ghcr.io/emk/rust-musl-builder:${{ matrix.toolchain }}
+            ekidd/rust-musl-builder:${{ matrix.toolchain }}
+            ${{ matrix.toolchain == 'stable' && 'ghcr.io/emk/rust-musl-builder:latest' || '' }}
+            ${{ matrix.toolchain == 'stable' && 'ekidd/rust-musl-builder:latest' || '' }}
+          labels: |
+            org.opencontainers.image.title=rust-musl-builder
+            org.opencontainers.image.description=Tools for statically linked Rust programs using musl-libc
+            org.opencontainers.image.url=https://github.com/emk/rust-musl-builder
+            org.opencontainers.image.source=https://github.com/emk/rust-musl-builder
+            net.randomhacks.rust-musl-builder.toolchain=${{ matrix.toolchain }}

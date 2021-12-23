@@ -7,6 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-openssl-probe = "0.1.2"
-sqlx = { version = "0.4.0-beta.1", default-features = false, features = ["runtime-tokio-rustls", "macros", "offline", "postgres"] }
-tokio = { version = "0.2", features = ["macros"] }
+openssl-probe = "0.1.4"
+sqlx = { version = "0.5.9", default-features = false, features = ["runtime-tokio-rustls", "macros", "offline", "postgres"] }
+tokio = { version = "0.2.25", features = ["macros"] }

@@ -4,7 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). We do not use Semantic Versioning, because our images are tagged based on Rust releases. However, we try to maintain as much backwards compatibility as possible.
 
-For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security are discovered in a library.
+For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security issues are discovered in a library.
+
+## 2021-12-23
+
+### Added
+
+- Set up weekly cron builds every Thursday, a few hours after Rust releases often happen. This should keep `stable` and `beta` more-or-less up-to-date. (Tagged releases like `1.57.0` will still need to be made manually.)
+
+### Changed
+
+- **Moved release builds from Docker Hub to GitHub!** This allows us to once again start building images without paying Docker Hub for slow, frustrating builders.
+- Moved PR tests from Travis CI to GitHub.
+- Updated `examples/` to use newer dependencies.
+- Updated to OpenSSL 1.1.1m.
+- Updated to mdbook 0.4.14.
+- Updated to mbbook-graphviz 0.1.3 (now using upstream binaries).
+- Updated to cargo-about 0.4.4.
+- Updated to cargo-audit 0.16.0 (now using upstream binaries).
+- Updated to PostgreSQL 11.14. Still no PostgreSQL 12 unless someone wants to look into diesel and static linking.
 
 ## 2021-02-13
 
