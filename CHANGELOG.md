@@ -11,6 +11,8 @@ For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0`
 ### Added
 
 - Set up weekly cron builds every Thursday, a few hours after Rust releases often happen. This should keep `stable` and `beta` more-or-less up-to-date. (Tagged releases like `1.57.0` will still need to be made manually.)
+- Retroactively built missing stable releases. We have these going way back, so we might as well add the rest.
+- Added a note explaining who can switch to `cross` and how to do it.
 
 ### Changed
 
