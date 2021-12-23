@@ -58,7 +58,7 @@ compile [examples/using-diesel](./examples/using-diesel) and [examples/using-sql
 
 You may be able to speed up build performance by adding the following `-v` commands to the `rust-musl-builder` alias:
 
-```txt
+```sh
 -v cargo-git:/home/rust/.cargo/git
 -v cargo-registry:/home/rust/.cargo/registry
 -v target:/home/rust/src/target
@@ -121,7 +121,7 @@ openssl = "*"
 
 For PostgreSQL, you'll also need to include `diesel` and `openssl` in your `main.rs` in the following order (in order to avoid linker errors):
 
-```toml
+```rust
 extern crate openssl;
 #[macro_use]
 extern crate diesel;
@@ -162,7 +162,7 @@ Next, copy [`build-release`](./examples/build-release) into your project and run
 
 Finally, add a `Dockerfile` to perform the actual build:
 
-```rust
+```Dockerfile
 FROM ekidd/rust-musl-builder
 
 # We need to add the source code to the image because `rust-musl-builder`
