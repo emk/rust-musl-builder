@@ -52,13 +52,6 @@ jobs:
           - "beta"
           - "1.57.0"
 
-          # We never built these, so include them until they get built and released once.
-          - 1.56.1
-          - 1.55.0
-          - 1.54.0
-          - 1.53.0
-          - 1.52.1
-
           # See https://rust-lang.github.io/rustup-components-history/ and choose
           # the newest nightly build that has all the components (except RLS,
           # which is obsolete).
