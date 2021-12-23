@@ -5,7 +5,14 @@
 - [Source on GitHub](https://github.com/emk/rust-musl-builder)
 - [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md)
 
-**UPDATED:** Major updates in this release which may break some builds. See [the CHANGELOG](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md) for details. If these updates break your build, you can update your `Dockerfile` to use `FROM ekidd/rust-musl-builder:1.48.0` to revert to the previous version.
+**UPDATED:** We are now running builds on GitHub, including scheduled builds of `stable` and `beta` every Thursday!
+
+However, **[`rustls`](rustls) now works well** with most of the Rust ecosystem, including `reqwest`, `tokio`, `tokio-postgres`, `sqlx` and many others. The only major project which still requires `libpq` and OpenSSL is [Diesel](https://diesel.rs/). If you don't need `diesel` or `libpq`:
+
+- See if you can switch away from OpenSSL, typically by using `features` in `Cargo.toml` to ask your dependencies to use [`rustls`](rustls) instead.
+- If you don't need OpenSSL, try [`cross build --target=x86_64-unknown-linux-musl --release`](https://github.com/rust-embedded/cross) to cross-compile your binaries for `libmusl`. This supports many more platforms, with less hassle!
+
+[rustls]: https://github.com/rustls
 
 ## What is this?
 
@@ -185,18 +192,6 @@ Docker now supports [multistage builds][multistage], which make it easy to build
 If you're using Docker crates which require specific C libraries to be installed, you can create a `Dockerfile` based on this one, and use `musl-gcc` to compile the libraries you need.  For an example, see [`examples/adding-a-library/Dockerfile`](./examples/adding-a-library/Dockerfile). This usually involves a bit of experimentation for each new library, but it seems to work well for most simple, standalone libraries.
 
 If you need an especially common library, please feel free to submit a pull request adding it to the main `Dockerfile`!  We'd like to support popular Rust crates out of the box.
-
-## ARM support (experimental)
-
-To target ARM hard float (Raspberry Pi):
-
-```sh
-rust-musl-builder cargo build --target=armv7-unknown-linux-musleabihf --release
-```
-
-Binaries will be written to `target/$TARGET_ARCHITECTURE/release`. By default it targets `x86_64-unknown-linux-musl` unless specified with `--target`.
-
-This is missing many of the libraries used by the `x86_64` build, and it should probably be split out of the base image and given its own tags.
 
 ## Development notes
 
