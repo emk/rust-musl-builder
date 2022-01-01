@@ -5,14 +5,12 @@
 - [Source on GitHub](https://github.com/emk/rust-musl-builder)
 - [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md)
 
-**UPDATED:** We are now running builds on GitHub, including scheduled builds of `stable` and `beta` every Thursday!
+**UPDATED:**
 
-However, **[`rustls`](rustls) now works well** with most of the Rust ecosystem, including `reqwest`, `tokio`, `tokio-postgres`, `sqlx` and many others. The only major project which still requires `libpq` and OpenSSL is [Diesel](https://diesel.rs/). If you don't need `diesel` or `libpq`:
+- We are now using Ubuntu 20.04 as our base image!
+- We are now running builds on GitHub, including scheduled builds of `stable` and `beta` every Thursday!
 
-- See if you can switch away from OpenSSL, typically by using `features` in `Cargo.toml` to ask your dependencies to use [`rustls`](rustls) instead.
-- If you don't need OpenSSL, try [`cross build --target=x86_64-unknown-linux-musl --release`](https://github.com/rust-embedded/cross) to cross-compile your binaries for `libmusl`. This supports many more platforms, with less hassle!
-
-[rustls]: https://github.com/rustls
+See our [CHANGELOG](https://github.com/emk/rust-musl-builder/blob/main/CHANGELOG.md) for more details.
 
 ## What is this?
 
@@ -28,6 +26,27 @@ rust-musl-builder cargo build --release
 This command assumes that `$(pwd)` is readable and writable by uid 1000, gid 1000. At the moment, it doesn't attempt to cache libraries between builds, so this is best reserved for making final release builds.
 
 For a more realistic example, see the `Dockerfile`s for [examples/using-diesel](./examples/using-diesel) and [examples/using-sqlx](./examples/using-sqlx).
+
+## Should you use this to distribute your Rust program?
+
+In general, linking against OpenSSL and/or `libpq` will limit your portability and bring you extra headaches. In an ideal world, you would avoid C libraries, replace OpenSSL with [`rustls`][rustls], and build your binary using [`cross`]](https://github.com/rust-embedded/cross). It's a super nice workflow:
+
+```sh
+# What you would ideally do instead of using rust-musl-builder.
+cross build --target=x86_64-unknown-linux-musl --release
+```
+
+`cross` is a drop-in replacement for `cargo`, and it will allow you cross-compile for many different platforms. Even better, it's supported by the Rust Tools team. The downside: It doesn't support OpenSSL, or anything which requires OpenSSL. So if you want to do this, you'll need to configure libraries like `hyper`, `reqwest` and `tokio-postgres` to use [`rustls`][rustls] instead. See the documentation for each library for instructions. This is often the least painful choice.
+
+### Use case 1 for `rust-musl-builder`: You need to link `libpq` and OpenSSL for `diesel`
+
+The standard PostgreSQL client library for C is `libpq`. The popular [Diesel](https://diesel.rs/) crate uses `libpq`. And `libpq` links against OpenSSL. So in order to use `diesel`, you need to link against OpenSSL. If you want to link OpenSSL and `libpq` statically, then you can't use `cross`. But you can use `rust-musl-builder`.
+
+### Use case 2 for `rust-musl-builder`: You need to support weird TLS certificates
+
+[`rustls`][rustls] is a fantastic crate and it's very easy to work with. However, it relies on `webpki` to parse TLS certificates, and `webpki` may break if it encounters weird certificates. (For example, [it requires a valid `subjectAltName`](https://github.com/briansmith/webpki/issues/11).) Unfortunately, hosted PostgreSQL servers tend to omit `subjectAltName`. This is known to be a problem with the soon-to-be-defunct Citus Data, and with Google's Cloud PostgreSQL solution. In these cases, you'll probably need OpenSSL for now.
+
+[rustls]: https://github.com/rustls
 
 ## Deploying your Rust application
 
