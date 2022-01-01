@@ -9,40 +9,46 @@ docker build -t ekidd/rust-musl-builder .
 # Make sure we can build our example derived container.
 docker build -t rust-musl-zlib examples/adding-a-library
 
-# Make sure we can build a multi-stage container.
-docker build -t rust-musl-builder-using-diesel examples/using-diesel
-docker run --rm rust-musl-builder-using-diesel
 
 echo "==== Verifying static linking"
 
+# Helper function to verify static linking. 
+function check_static_linking() {
+  local image="$1"
+  local container_bin_path="$2"
+
+  local bin_basename="$(basename $container_bin_path)"
+  local bin_path="examples/bin/$bin_basename"
+
+  echo -e "--- Test case for $bin_basename:"
+  local container="$(docker create "$1")"
+  docker cp "$container:$container_bin_path" "$bin_path"
+  docker rm -f "$container"
+  echo 'ldd says:'
+  ldd "$bin_path" > .tmp-ldd-output
+  if ! grep "statically linked" .tmp-ldd-output ; then
+    rm .tmp-ldd-output
+    echo "[FAIL] $bin_path is not static!" 1>&2
+    exit 1
+  fi
+  rm .tmp-ldd-output
+  echo -e "[PASS] $bin_path binary is statically linked.\n"
+}
+
+mkdir -p examples/bin
+
+# Make sure we can build a static executable using `diesel`.
+docker build -t rust-musl-builder-using-diesel examples/using-diesel
+docker run --rm rust-musl-builder-using-diesel
+check_static_linking rust-musl-builder-using-diesel /usr/local/bin/using-diesel
+
 # Make sure we can build a static executable using `sqlx`.
 docker build -t rust-musl-builder-using-sqlx examples/using-sqlx
-docker run --rm rust-musl-builder-using-sqlx sh -c "
-set -euo pipefail
-
-echo -e '--- Test case for sqlx:'
-echo 'ldd says:'
-if ldd /usr/local/bin/using-sqlx; then
-  echo '[FAIL] Executable is not static!' 1>&2
-  exit 1
-fi
-echo -e '[PASS] using-sqlx binary is statically linked.\n'
-"
+check_static_linking rust-musl-builder-using-sqlx /usr/local/bin/using-sqlx
 
 # Make sure we can build a static executable using `git2`.
 docker build -t rust-musl-builder-linking-with-git2 examples/linking-with-git2
-docker run --rm rust-musl-builder-linking-with-git2 bash -c "
-set -euo pipefail
-cd /home/rust/src
-
-echo -e '--- Test case for libgit2:'
-echo 'ldd says:'
-if ldd target/x86_64-unknown-linux-musl/debug/linking-with-git2; then
-  echo '[FAIL] Executable is not static!' 1>&2
-  exit 1
-fi
-echo -e '[PASS] libgit2 binary is statically linked.\n'
-"
+check_static_linking rust-musl-builder-linking-with-git2 /home/rust/src/target/x86_64-unknown-linux-musl/debug/linking-with-git2
 
 # We're good.
 echo 'OK. ALL TESTS PASSED.' 1>&2

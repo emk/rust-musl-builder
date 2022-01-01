@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 For maximum stablity, use images with tags like `ekidd/rust-musl-builder:1.46.0` or `ekidd/rust-musl-builder:nightly-2020-08-26`. These may occasionally be rebuilt, but only while they're "current", or possibly if they're recent and serious security issues are discovered in a library.
 
+## [Unreleased]
+
+### Changed
+
+- Updated base image to Ubuntu 20.04. Major thanks to @asaaki for figuring out why the check for successful static linking was returning false negatives.
+
 ## 2021-12-23
 
 ### Added
