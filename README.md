@@ -29,7 +29,7 @@ For a more realistic example, see the `Dockerfile`s for [examples/using-diesel](
 
 ## Should you use this to distribute your Rust program?
 
-In general, linking against OpenSSL and/or `libpq` will limit your portability and bring you extra headaches. In an ideal world, you would avoid C libraries, replace OpenSSL with [`rustls`][rustls], and build your binary using [`cross`]](https://github.com/rust-embedded/cross). It's a super nice workflow:
+In general, linking against OpenSSL and/or `libpq` will limit your portability and bring you extra headaches. In an ideal world, you would avoid C libraries, replace OpenSSL with [`rustls`][rustls], and build your binary using [`cross`](https://github.com/rust-embedded/cross). It's a super nice workflow:
 
 ```sh
 # What you would ideally do instead of using rust-musl-builder.
@@ -44,7 +44,7 @@ The standard PostgreSQL client library for C is `libpq`. The popular [Diesel](ht
 
 ### Use case 2 for `rust-musl-builder`: You need to support weird TLS certificates
 
-[`rustls`][rustls] is a fantastic crate and it's very easy to work with. However, it relies on `webpki` to parse TLS certificates, and `webpki` may break if it encounters weird certificates. (For example, [it requires a valid `subjectAltName`](https://github.com/briansmith/webpki/issues/11).) Unfortunately, hosted PostgreSQL servers tend to omit `subjectAltName`. This is known to be a problem with the soon-to-be-defunct Citus Data, and with Google's Cloud PostgreSQL solution. In these cases, you'll probably need OpenSSL for now.
+[`rustls`][rustls] is a fantastic crate and it's very easy to work with. However, it relies on `webpki` to parse TLS certificates, and `webpki` may break if it encounters weird certificates. For example, [it requires a valid `subjectAltName`](https://github.com/briansmith/webpki/issues/11). Unfortunately, hosted PostgreSQL servers tend to omit `subjectAltName`. This is known to be a problem with the soon-to-be-defunct Citus Data, and with Google's Cloud PostgreSQL solution. In these cases, you'll probably need OpenSSL for now.
 
 [rustls]: https://github.com/rustls
 
