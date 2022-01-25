@@ -27,7 +27,7 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/rust-musl-builder:1.57.0
+            ghcr.io/${{ github.repository }}/rust-musl-builder:1.58.1
           build-args: |
-            TOOLCHAIN=1.57.0
+            TOOLCHAIN=1.58.1
         
