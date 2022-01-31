@@ -9,7 +9,7 @@ ARG TOOLCHAIN=stable
 # - https://www.openssl.org/source/
 #
 # ALSO UPDATE hooks/build!
-ARG OPENSSL_VERSION=1.1.1i
+ARG OPENSSL_VERSION=1.1.1m
 
 # Versions for other dependencies. Here are the places to check for new
 # releases:
@@ -22,9 +22,8 @@ ARG OPENSSL_VERSION=1.1.1i
 #
 # We're stuck on PostgreSQL 11 until we figure out
 # https://github.com/emk/rust-musl-builder/issues.
-ARG MDBOOK_VERSION=0.4.6
-ARG CARGO_ABOUT_VERSION=0.2.3
-ARG CARGO_DENY_VERSION=0.8.5
+ARG CARGO_ABOUT_VERSION=0.4.4
+ARG CARGO_DENY_VERSION=0.11.1
 ARG ZLIB_VERSION=1.2.11
 ARG POSTGRESQL_VERSION=11.11
 
@@ -57,10 +56,6 @@ RUN apt-get update && \
         && \
     apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
-    curl -fLO https://github.com/rust-lang-nursery/mdBook/releases/download/v$MDBOOK_VERSION/mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
-    tar xf mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
-    mv mdbook /usr/local/bin/ && \
-    rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-gnu.tar.gz && \
     curl -fLO https://github.com/EmbarkStudios/cargo-about/releases/download/$CARGO_ABOUT_VERSION/cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl/cargo-about /usr/local/bin/ && \
@@ -167,7 +162,6 @@ ENV X86_64_UNKNOWN_LINUX_MUSL_OPENSSL_DIR=/usr/local/musl/ \
 # but cargo-deny provides a superset of cargo-audit's features.
 RUN env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-audit && \
     env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-deb && \
-    env CARGO_HOME=/opt/rust/cargo cargo install -f mdbook-graphviz && \
     rm -rf /opt/rust/cargo/registry/
 
 # Allow sudo without a password.
