@@ -111,7 +111,7 @@ RUN echo "Building OpenSSL" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make && \
-    make install && \
+    make install_dev && \
     rm /usr/local/musl/include/linux /usr/local/musl/include/asm /usr/local/musl/include/asm-generic && \
     rm -r /tmp/*
 
