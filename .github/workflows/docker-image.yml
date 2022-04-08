@@ -7,7 +7,7 @@ jobs:
   push_to_registry:
     name: Push Docker image to Github Packages
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       packages: write
       contents: read
     steps:
@@ -27,7 +27,6 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/rust-musl-builder:1.59.0
+            ghcr.io/${{ github.repository }}/rust-musl-builder:1.60.0
           build-args: |
-            TOOLCHAIN=1.59.0
-        
+            TOOLCHAIN=1.60.0
