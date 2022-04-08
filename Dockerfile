@@ -24,7 +24,7 @@ ARG OPENSSL_VERSION=1.1.1m
 # https://github.com/emk/rust-musl-builder/issues.
 ARG CARGO_ABOUT_VERSION=0.4.4
 ARG CARGO_DENY_VERSION=0.11.1
-ARG ZLIB_VERSION=1.2.11
+ARG ZLIB_VERSION=1.2.12
 ARG POSTGRESQL_VERSION=11.11
 
 # Make sure we have basic dev tools for building C libraries.  Our goal here is
