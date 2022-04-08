@@ -51,6 +51,7 @@ RUN apt-get update && \
         libssl-dev \
         linux-libc-dev \
         pkgconf \
+        protobuf-compiler \
         sudo \
         xutils-dev \
         && \
