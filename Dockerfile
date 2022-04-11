@@ -142,7 +142,9 @@ RUN curl https://sh.rustup.rs -sSf | \
     env CARGO_HOME=/opt/rust/cargo \
         rustup component add clippy && \
     env CARGO_HOME=/opt/rust/cargo \
-        rustup target add x86_64-unknown-linux-musl
+        rustup target add x86_64-unknown-linux-musl && \
+    env CARGO_HOME=/opt/rust/cargo \
+        rustup component add llvm-tools-preview
 ADD cargo-config.toml /opt/rust/cargo/config
 
 # Set up our environment variables so that we cross-compile using musl-libc by
@@ -163,6 +165,7 @@ ENV X86_64_UNKNOWN_LINUX_MUSL_OPENSSL_DIR=/usr/local/musl/ \
 # but cargo-deny provides a superset of cargo-audit's features.
 RUN env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-audit && \
     env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-deb && \
+    env CARGO_HOME=/opt/rust/cargo cargo install -f cargo-llvm-cov && \
     rm -rf /opt/rust/cargo/registry/
 
 # Allow sudo without a password.
