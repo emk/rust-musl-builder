@@ -1,4 +1,1 @@
-examples/adding-a-library/target
-examples/linking-with-git2/target
-examples/using-diesel/target
-examples/using-sqlx/target
+examples/enarx/target

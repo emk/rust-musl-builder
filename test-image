@@ -4,45 +4,10 @@
 set -euo pipefail
 
 # Make sure we can build our main container.
-docker build -t ekidd/rust-musl-builder .
+docker build -t platten/rust-musl-builder .
 
-# Make sure we can build our example derived container.
-docker build -t rust-musl-zlib examples/adding-a-library
-
-# Make sure we can build a multi-stage container.
-docker build -t rust-musl-builder-using-diesel examples/using-diesel
-docker run --rm rust-musl-builder-using-diesel
-
-echo "==== Verifying static linking"
-
-# Make sure we can build a static executable using `sqlx`.
-docker build -t rust-musl-builder-using-sqlx examples/using-sqlx
-docker run --rm rust-musl-builder-using-sqlx sh -c "
-set -euo pipefail
-
-echo -e '--- Test case for sqlx:'
-echo 'ldd says:'
-if ldd /usr/local/bin/using-sqlx; then
-  echo '[FAIL] Executable is not static!' 1>&2
-  exit 1
-fi
-echo -e '[PASS] using-sqlx binary is statically linked.\n'
-"
-
-# Make sure we can build a static executable using `git2`.
-docker build -t rust-musl-builder-linking-with-git2 examples/linking-with-git2
-docker run --rm rust-musl-builder-linking-with-git2 bash -c "
-set -euo pipefail
-cd /home/rust/src
-
-echo -e '--- Test case for libgit2:'
-echo 'ldd says:'
-if ldd target/x86_64-unknown-linux-musl/debug/linking-with-git2; then
-  echo '[FAIL] Executable is not static!' 1>&2
-  exit 1
-fi
-echo -e '[PASS] libgit2 binary is statically linked.\n'
-"
+# Make sure we can build the enarx application
+docker build -t rust-musl-enarx examples/enarx
 
 # We're good.
 echo 'OK. ALL TESTS PASSED.' 1>&2
