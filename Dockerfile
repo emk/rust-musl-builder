@@ -1,8 +1,8 @@
 FROM debian:bookworm-slim as builder
 
-ARG TOOLCHAIN=nightly-2022-04-11
+ARG TOOLCHAIN=nightly-2022-05-03
 ARG TARGETS="x86_64-unknown-linux-musl x86_64-unknown-linux-gnu x86_64-unknown-none wasm32-wasi"
-ARG OPENSSL_VERSION=1.1.1n
+ARG OPENSSL_VERSION=1.1.1o
 
 USER root
 
