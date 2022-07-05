@@ -26,6 +26,7 @@ ARG CARGO_ABOUT_VERSION=0.4.4
 ARG CARGO_DENY_VERSION=0.11.1
 ARG ZLIB_VERSION=1.2.12
 ARG POSTGRESQL_VERSION=11.11
+ARG PROTOBUF_VERSION=21.1
 
 # Make sure we have basic dev tools for building C libraries.  Our goal here is
 # to support the musl-libc builds and Cargo builds needed for a large selection
@@ -35,9 +36,11 @@ ARG POSTGRESQL_VERSION=11.11
 # need to install any more software.
 #
 # `mdbook` is the standard Rust tool for making searchable HTML manuals.
-RUN apt-get update && \
+RUN buildDeps='unzip'; \
+    apt-get update && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -yq \
+        $buildDeps \
         build-essential \
         cmake \
         curl \
@@ -51,11 +54,9 @@ RUN apt-get update && \
         libssl-dev \
         linux-libc-dev \
         pkgconf \
-        protobuf-compiler \
         sudo \
         xutils-dev \
         && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
     curl -fLO https://github.com/EmbarkStudios/cargo-about/releases/download/$CARGO_ABOUT_VERSION/cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
@@ -64,7 +65,12 @@ RUN apt-get update && \
     curl -fLO https://github.com/EmbarkStudios/cargo-deny/releases/download/$CARGO_DENY_VERSION/cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     mv cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl/cargo-deny /usr/local/bin/ && \
-    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz
+    rm -rf cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl cargo-deny-$CARGO_DENY_VERSION-x86_64-unknown-linux-musl.tar.gz && \
+    curl -fLO https://github.com/protocolbuffers/protobuf/releases/download/v$PROTOBUF_VERSION/protoc-$PROTOBUF_VERSION-linux-x86_64.zip && \
+    unzip -o -d /usr/local ./protoc-$PROTOBUF_VERSION-linux-x86_64.zip && \
+    rm ./protoc-$PROTOBUF_VERSION-linux-x86_64.zip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    apt-get purge -y --auto-remove $buildDeps
 
 # Static linking for C++ code
 RUN ln -s "/usr/bin/g++" "/usr/bin/musl-g++"
@@ -85,7 +91,7 @@ RUN echo "Building OpenSSL" && \
     cd /tmp && \
     short_version="$(echo "$OPENSSL_VERSION" | sed s'/[a-z]$//' )" && \
     curl -fLO "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" || \
-        curl -fLO "https://www.openssl.org/source/old/$short_version/openssl-$OPENSSL_VERSION.tar.gz" && \
+    curl -fLO "https://www.openssl.org/source/old/$short_version/openssl-$OPENSSL_VERSION.tar.gz" && \
     tar xvzf "openssl-$OPENSSL_VERSION.tar.gz" && cd "openssl-$OPENSSL_VERSION" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
@@ -136,15 +142,15 @@ ENV RUSTUP_HOME=/opt/rust/rustup \
 # manually.
 RUN curl https://sh.rustup.rs -sSf | \
     env CARGO_HOME=/opt/rust/cargo \
-        sh -s -- -y --default-toolchain $TOOLCHAIN --profile minimal --no-modify-path && \
+    sh -s -- -y --default-toolchain $TOOLCHAIN --profile minimal --no-modify-path && \
     env CARGO_HOME=/opt/rust/cargo \
-        rustup component add rustfmt && \
+    rustup component add rustfmt && \
     env CARGO_HOME=/opt/rust/cargo \
-        rustup component add clippy && \
+    rustup component add clippy && \
     env CARGO_HOME=/opt/rust/cargo \
-        rustup target add x86_64-unknown-linux-musl && \
+    rustup target add x86_64-unknown-linux-musl && \
     env CARGO_HOME=/opt/rust/cargo \
-        rustup component add llvm-tools-preview
+    rustup component add llvm-tools-preview
 ADD cargo-config.toml /opt/rust/cargo/config
 
 # Set up our environment variables so that we cross-compile using musl-libc by
