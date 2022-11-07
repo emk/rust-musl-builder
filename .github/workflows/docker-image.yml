@@ -27,6 +27,6 @@ jobs:
         with:
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}/rust-musl-builder:1.64.0-llvm-cov
+            ghcr.io/${{ github.repository }}/rust-musl-builder:1.65.0-llvm-cov
           build-args: |
-            TOOLCHAIN=1.64.0
+            TOOLCHAIN=1.65.0
