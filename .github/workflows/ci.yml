@@ -56,7 +56,6 @@ jobs:
           # the newest nightly build that has all the components (except RLS,
           # which is obsolete).
           - "nightly-2021-12-23"
-
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -85,13 +84,13 @@ jobs:
             TOOLCHAIN=${{ matrix.toolchain }}
           # Use some slightly funky substituations to tag only `stable` as `latest`.
           tags: |
-            ghcr.io/emk/rust-musl-builder:${{ matrix.toolchain }}
-            ekidd/rust-musl-builder:${{ matrix.toolchain }}
-            ${{ matrix.toolchain == 'stable' && 'ghcr.io/emk/rust-musl-builder:latest' || '' }}
-            ${{ matrix.toolchain == 'stable' && 'ekidd/rust-musl-builder:latest' || '' }}
+            ghcr.io/passfort/rust-musl-builder:${{ matrix.toolchain }}
+            passfort/rust-musl-builder:${{ matrix.toolchain }}
+            ${{ matrix.toolchain == 'stable' && 'ghcr.io/passfort/rust-musl-builder:latest' || '' }}
+            ${{ matrix.toolchain == 'stable' && 'passfort/rust-musl-builder:latest' || '' }}
           labels: |
             org.opencontainers.image.title=rust-musl-builder
             org.opencontainers.image.description=Tools for statically linked Rust programs using musl-libc
-            org.opencontainers.image.url=https://github.com/emk/rust-musl-builder
-            org.opencontainers.image.source=https://github.com/emk/rust-musl-builder
+            org.opencontainers.image.url=https://github.com/passfort/rust-musl-builder
+            org.opencontainers.image.source=https://github.com/passfort/rust-musl-builder
             net.randomhacks.rust-musl-builder.toolchain=${{ matrix.toolchain }}

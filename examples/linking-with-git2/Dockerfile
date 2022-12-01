@@ -4,7 +4,7 @@
 # musl-gcc.
 
 # Our first FROM statement declares the build environment.
-FROM ekidd/rust-musl-builder AS builder
+FROM passfort/rust-musl-builder AS builder
 
 # Add our source code.
 ADD --chown=rust:rust . ./
