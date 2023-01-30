@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    ":label(renovate)",
+    ":semanticCommits",
+    ":timezone(Asia/Tokyo)",
+    "config:base"
+  ],
+  "dependencyDashboard": true,
+  "platformAutomerge": true,
+  "assignAutomerge": true,
+  "rebaseWhen": "auto",
+  "prHourlyLimit": 0,
+  "prConcurrentLimit": 0,
+  "schedule": ["after 1am and before 9am every weekday"],
+  "prCreation": "not-pending",
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "^\\.github/workflows/.*\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "['\"]?(?<currentValue>[^'\" \\n]+?)['\"]? +# renovate: depName=(?<depName>.*?)( extractVersion=(?<extractVersion>.*?))?\\n"
+      ],
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "{{#if extractVersion}}{{{extractVersion}}}{{else}}^v(?<version>.*)${{/if}}"
+    }
+  ]
+}
