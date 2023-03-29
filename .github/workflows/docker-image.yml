@@ -5,7 +5,7 @@ on:
     types: [published]
 
 env:
-  RUST_VERSION: 1.68.0 # renovate: depName=rust-lang/rust
+  RUST_VERSION: 1.68.2 # renovate: depName=rust-lang/rust
 
 jobs:
   push_to_registry:
