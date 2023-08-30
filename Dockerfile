@@ -24,7 +24,7 @@ ARG OPENSSL_VERSION=1.1.1m
 # https://github.com/emk/rust-musl-builder/issues.
 ARG CARGO_ABOUT_VERSION=0.4.4
 ARG CARGO_DENY_VERSION=0.11.1
-ARG ZLIB_VERSION=1.2.13
+ARG ZLIB_VERSION=1.3
 ARG POSTGRESQL_VERSION=11.11
 ARG PROTOBUF_VERSION=21.1
 
@@ -40,23 +40,23 @@ RUN buildDeps='unzip'; \
     apt-get update && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get install -yq \
-        $buildDeps \
-        build-essential \
-        cmake \
-        curl \
-        file \
-        git \
-        graphviz \
-        musl-dev \
-        musl-tools \
-        libpq-dev \
-        libsqlite-dev \
-        libssl-dev \
-        linux-libc-dev \
-        pkgconf \
-        sudo \
-        xutils-dev \
-        && \
+    $buildDeps \
+    build-essential \
+    cmake \
+    curl \
+    file \
+    git \
+    graphviz \
+    musl-dev \
+    musl-tools \
+    libpq-dev \
+    libsqlite-dev \
+    libssl-dev \
+    linux-libc-dev \
+    pkgconf \
+    sudo \
+    xutils-dev \
+    && \
     useradd rust --user-group --create-home --shell /bin/bash --groups sudo && \
     curl -fLO https://github.com/EmbarkStudios/cargo-about/releases/download/$CARGO_ABOUT_VERSION/cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
     tar xf cargo-about-$CARGO_ABOUT_VERSION-x86_64-unknown-linux-musl.tar.gz && \
