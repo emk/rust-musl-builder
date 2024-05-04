@@ -5,7 +5,7 @@
 - [Source on GitHub](https://github.com/emk/rust-musl-builder)
 - [Changelog](https://github.com/emk/rust-musl-builder/blob/master/CHANGELOG.md)
 
-**UPDATED:** We are now running builds on GitHub, including scheduled builds of `stable` and `beta` every Thursday!
+**UPDATED:** This repository is effectively dead at this point, given the increasing rarity of crates which require OpenSSL.
 
 However, **[`rustls`](rustls) now works well** with most of the Rust ecosystem, including `reqwest`, `tokio`, `tokio-postgres`, `sqlx` and many others. The only major project which still requires `libpq` and OpenSSL is [Diesel](https://diesel.rs/). If you don't need `diesel` or `libpq`:
 
