@@ -1,5 +1,5 @@
-# Use Ubuntu 18.04 LTS as our base image.
-FROM ubuntu:18.04
+# Use Ubuntu Jammy as our base image.
+FROM ubuntu:jammy
 
 # The Rust toolchain to use when building our image.  Set by `hooks/build`.
 ARG TOOLCHAIN=stable
@@ -111,7 +111,7 @@ RUN echo "Building OpenSSL" && \
     env CC=musl-gcc ./Configure no-shared no-zlib -fPIC --prefix=/usr/local/musl -DOPENSSL_NO_SECURE_MEMORY linux-x86_64 && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make depend && \
     env C_INCLUDE_PATH=/usr/local/musl/include/ make && \
-    make install && \
+    make install_dev && \
     rm /usr/local/musl/include/linux /usr/local/musl/include/asm /usr/local/musl/include/asm-generic && \
     rm -r /tmp/*
 
